@@ -1,0 +1,24 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Artigo | Syneidesis">
+    <article id="conteudo-artigo"></article>
+
+    <script is:inline src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script is:inline src="/js/markdown.js"></script>
+    <script is:inline>
+        const parametros = new URLSearchParams(window.location.search);
+        const categoria = parametros.get("categoria");
+        const texto = parametros.get("texto");
+        const categorias = ["artigos", "poemas"];
+        const slugValido = texto && /^[a-z0-9-]+$/.test(texto);
+
+        if (categorias.includes(categoria) && slugValido) {
+            carregarArtigo(`/${categoria}/${texto}.md`);
+        } else {
+            document.querySelector("#conteudo-artigo").textContent =
+                "Artigo não encontrado.";
+        }
+    </script>
+</Base>

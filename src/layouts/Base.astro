@@ -1,0 +1,241 @@
+---
+const { title = "Syneidesis", lang = "pt" } = Astro.props;
+
+const menus = {
+    pt: [
+        ["Início", "/"],
+        ["Artigos", "/artigos/"],
+        ["Poemas", "/poemas/"],
+        ["Desenhos", "/desenhos/"],
+        ["Destaques", "/destaques/"],
+        ["Leituras", "/leituras/"],
+        ["Sobre", "/sobre/"],
+        ["Assinar", "/correspondentia/"],
+    ],
+    en: [
+        ["Home", "/en/"],
+        ["Articles", "/en/articles/"],
+        ["Poems", "/en/poems/"],
+        ["Drawings", "/en/drawings/"],
+        ["Highlights", "/en/highlights/"],
+        ["Readings", "/en/readings/"],
+        ["About", "/en/about/"],
+        ["Subscribe", "/en/correspondentia/"],
+    ],
+};
+
+const idioma = lang === "en" ? "en" : "pt";
+
+const equivalencias = {
+    "/": { pt: "/", en: "/en/" },
+    "/artigos": { pt: "/artigos/", en: "/en/articles/" },
+    "/poemas": { pt: "/poemas/", en: "/en/poems/" },
+    "/desenhos": { pt: "/desenhos/", en: "/en/drawings/" },
+    "/destaques": { pt: "/destaques/", en: "/en/highlights/" },
+    "/leituras": { pt: "/leituras/", en: "/en/readings/" },
+    "/sobre": { pt: "/sobre/", en: "/en/about/" },
+    "/correspondentia": {
+        pt: "/correspondentia/",
+        en: "/en/correspondentia/",
+    },
+    "/artigo.html": {
+        pt: "/artigo.html",
+        en: "/en/article.html",
+    },
+    "/en": { pt: "/", en: "/en/" },
+    "/en/articles": { pt: "/artigos/", en: "/en/articles/" },
+    "/en/poems": { pt: "/poemas/", en: "/en/poems/" },
+    "/en/drawings": { pt: "/desenhos/", en: "/en/drawings/" },
+    "/en/highlights": { pt: "/destaques/", en: "/en/highlights/" },
+    "/en/readings": { pt: "/leituras/", en: "/en/readings/" },
+    "/en/about": { pt: "/sobre/", en: "/en/about/" },
+    "/en/correspondentia": {
+        pt: "/correspondentia/",
+        en: "/en/correspondentia/",
+    },
+    "/en/article.html": {
+        pt: "/artigo.html",
+        en: "/en/article.html",
+    },
+};
+
+const caminhoAtual = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const rotas = equivalencias[caminhoAtual] || {
+    pt: "/",
+    en: "/en/",
+};
+
+const caminhoPT = rotas.pt;
+const caminhoEN = rotas.en;
+
+const parametros = new URLSearchParams(Astro.url.search);
+
+const categorias = {
+    articles: "artigos",
+    poems: "poemas",
+    artigos: "articles",
+    poemas: "poems",
+};
+
+if (parametros.has("categoria")) {
+    const categoria = categorias[parametros.get("categoria")];
+
+    if (categoria) {
+        parametros.set("categoria", categoria);
+    }
+}
+
+const busca = parametros.toString() ? `?${parametros.toString()}` : "";
+---
+
+<!doctype html>
+<html lang={idioma === "en" ? "en" : "pt-BR"}>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{title}</title>
+        <link rel="stylesheet" href="/style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&family=UnifrakturCook:wght@700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            href="/imagens/Forest%20Green%20S%20Triangle%20Emblem.png"
+        />
+    </head>
+
+    <body>
+        <header>
+            <picture>
+                <a href={idioma === "en" ? "/en/" : "/"}>
+                    <img
+                        id="tituloimg"
+                        src="/imagens/title.png"
+                        alt="Syneidesis"
+                    />
+                </a>
+            </picture>
+
+            <nav class="menu">
+                {menus[idioma].map(([label, url]) => (
+                    <a href={url}>{label}</a>
+                ))}
+            </nav>
+
+            <nav class="idiomas" aria-label="Language selection">
+                <a
+                    id="idioma-pt"
+                    href={`${caminhoPT}${busca}`}
+                    aria-current={idioma === "pt" ? "page" : undefined}
+                >
+                    PT-BR
+                </a>
+                <a
+                    id="idioma-en"
+                    href={`${caminhoEN}${busca}`}
+                    aria-current={idioma === "en" ? "page" : undefined}
+                >
+                    EN
+                </a>
+            </nav>
+        </header>
+
+        <main>
+            <slot />
+        </main>
+
+        <footer>
+            {idioma === "en"
+                ? "© 2026 Syneidesis. All rights reserved."
+                : "© 2026 Syneidesis. Todos os direitos reservados."}
+        </footer>
+
+        <script is:inline>
+            const equivalenciasIdioma = {
+                "/": { pt: "/", en: "/en/" },
+                "/artigos": { pt: "/artigos/", en: "/en/articles/" },
+                "/poemas": { pt: "/poemas/", en: "/en/poems/" },
+                "/desenhos": { pt: "/desenhos/", en: "/en/drawings/" },
+                "/destaques": { pt: "/destaques/", en: "/en/highlights/" },
+                "/leituras": { pt: "/leituras/", en: "/en/readings/" },
+                "/sobre": { pt: "/sobre/", en: "/en/about/" },
+                "/correspondentia": {
+                    pt: "/correspondentia/",
+                    en: "/en/correspondentia/",
+                },
+                "/artigo.html": {
+                    pt: "/artigo.html",
+                    en: "/en/article.html",
+                },
+                "/en": { pt: "/", en: "/en/" },
+                "/en/articles": { pt: "/artigos/", en: "/en/articles/" },
+                "/en/poems": { pt: "/poemas/", en: "/en/poems/" },
+                "/en/drawings": { pt: "/desenhos/", en: "/en/drawings/" },
+                "/en/highlights": { pt: "/destaques/", en: "/en/highlights/" },
+                "/en/readings": { pt: "/leituras/", en: "/en/readings/" },
+                "/en/about": { pt: "/sobre/", en: "/en/about/" },
+                "/en/correspondentia": {
+                    pt: "/correspondentia/",
+                    en: "/en/correspondentia/",
+                },
+                "/en/article.html": {
+                    pt: "/artigo.html",
+                    en: "/en/article.html",
+                },
+            };
+
+            const caminho = window.location.pathname.replace(/\/+$/, "") || "/";
+
+            const rotas = equivalenciasIdioma[caminho] || {
+                pt: "/",
+                en: "/en/",
+            };
+
+            const categoriasIdioma = {
+                articles: "artigos",
+                poems: "poemas",
+                artigos: "articles",
+                poemas: "poems",
+            };
+
+            function montarLink(destino) {
+                const parametros = new URLSearchParams(window.location.search);
+
+                if (parametros.has("categoria")) {
+                    const categoria = parametros.get("categoria");
+                    const categoriaTraduzida = categoriasIdioma[categoria];
+
+                    if (categoriaTraduzida) {
+                        parametros.set("categoria", categoriaTraduzida);
+                    }
+                }
+
+                const busca = parametros.toString();
+
+                return destino + (busca ? "?" + busca : "");
+            }
+
+            const botaoPT = document.querySelector("#idioma-pt");
+            const botaoEN = document.querySelector("#idioma-en");
+
+            botaoPT.href = montarLink(rotas.pt);
+            botaoEN.href = montarLink(rotas.en);
+
+            if (document.documentElement.lang === "pt-BR") {
+                botaoPT.addEventListener("click", (evento) => {
+                    evento.preventDefault();
+                });
+            }
+
+            if (document.documentElement.lang === "en") {
+                botaoEN.addEventListener("click", (evento) => {
+                    evento.preventDefault();
+                });
+            }
+        </script>
+    </body>
+</html>

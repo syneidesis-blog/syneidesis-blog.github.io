@@ -1,0 +1,456 @@
+
+@charset "UTF-8";
+
+/* ===== PALETA E CONFIGURAÇÕES GERAIS ===== */
+
+:root {
+    --fundo: #EEF0E9;
+    --painel: #C4D2D0;
+    --verde-escuro: #263D3A;
+    --verde-medio: #49645D;
+    --verde-suave: #829A91;
+    --texto-claro: #F5F2E9;
+    --linha: #A9C5C0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--fundo);
+    color: var(--verde-escuro);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ===== CABEÇALHO ===== */
+
+header {
+    background: linear-gradient(
+        to bottom,
+        var(--verde-escuro),
+        var(--verde-medio)
+    );
+    box-shadow: 0 3px 12px #263D3A40;
+    padding: 15px 15px 10px;
+}
+
+#tituloimg {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    margin: auto;
+    animation: fadeUp 0.6s ease;
+}
+
+nav {
+    text-align: center;
+    margin-top: 12px;
+}
+
+nav > a {
+    display: inline-block;
+    padding: 12px;
+    color: var(--texto-claro);
+    font-family: Cambria, Georgia, serif;
+    font-size: 19px;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+nav > a:hover {
+    color: var(--linha);
+    transform: translateY(-2px);
+}
+
+/* ===== ANIMAÇÃO ===== */
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== CONTEÚDO PRINCIPAL ===== */
+
+main {
+    width: 95%;
+    max-width: 1100px;
+    min-height: 70vh;
+    margin: auto;
+    padding: 25px 25px 50px;
+    background-color: var(--painel);
+    box-shadow: 0 2px 12px #263D3A30;
+    border-radius: 0 0 10px 10px;
+}
+
+main > h1 {
+    margin: 0 0 25px;
+    padding-top: 10px;
+    color: var(--verde-escuro);
+    font-family: Cambria, Georgia, serif;
+    font-size: 30px;
+    font-weight: normal;
+    text-indent: 10px;
+    animation: fadeUp 0.6s ease;
+}
+
+h2 {
+    color: var(--verde-escuro);
+    font-family: Cambria, Georgia, serif;
+    font-weight: normal;
+}
+
+p {
+    color: var(--verde-escuro);
+    line-height: 1.7;
+}
+
+/* ===== APRESENTAÇÃO ===== */
+
+#caixa1 {
+    max-width: 600px;
+    width: 90%;
+    margin: 25px auto;
+    padding: 12px 20px;
+    background-color: var(--verde-escuro);
+    border-radius: 12px;
+    animation: fadeUp 0.6s ease;
+}
+
+#caixa1 p {
+    color: var(--texto-claro);
+    text-align: center;
+}
+
+/* ===== SEÇÃO QUEM SOU EU ===== */
+
+.secao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 35px auto;
+    text-align: center;
+}
+
+.secao > img {
+    width: 100%;
+    max-width: 280px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px #263D3A35;
+}
+
+.texto {
+    max-width: 550px;
+    padding: 10px;
+}
+
+.texto h2 {
+    font-size: 25px;
+}
+
+.texto p {
+    text-align: justify;
+}
+
+/* ===== DIVISÓRIAS ===== */
+
+.barra {
+    border: none;
+    height: 6px;
+    margin: 35px auto;
+    background: linear-gradient(
+        90deg,
+        #D5E2DC,
+        #A9C5C0,
+        #607F7A,
+        #A9C5C0,
+        #D5E2DC
+    );
+    border-radius: 50%;
+}
+
+/* ===== PUBLICAÇÕES E DESTAQUES ===== */
+
+.scroll-posts {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 15px 10px 20px;
+    text-align: center;
+    scroll-behavior: smooth;
+}
+
+.scroll-posts > div {
+    flex: 0 0 180px;
+}
+
+.scroll-posts > div a {
+    display: block;
+    text-decoration: none;
+}
+
+.posts {
+    display: block;
+    width: 150px;
+    height: 150px;
+    margin: 10px auto;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.scroll-posts a:hover .posts {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px #263D3A40;
+}
+
+.scroll-posts p {
+    margin: 10px 5px;
+    color: var(--verde-escuro);
+    font-family: Cambria, Georgia, serif;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.scroll-posts::-webkit-scrollbar {
+    height: 7px;
+}
+
+.scroll-posts::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scroll-posts::-webkit-scrollbar-thumb {
+    background: var(--verde-medio);
+    border-radius: 10px;
+}
+
+.scroll-posts::-webkit-scrollbar-thumb:hover {
+    background: var(--verde-suave);
+}
+
+/* ===== LISTAGEM DE ARTIGOS E POEMAS ===== */
+
+.lista-textos {
+    padding: 20px 40px;
+}
+
+.lista-textos article {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--linha);
+}
+
+.lista-textos h2 {
+    margin-bottom: 12px;
+    font-size: 24px;
+    line-height: 1.4;
+}
+
+.lista-textos h2 a {
+    color: var(--verde-escuro);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.lista-textos h2 a:hover {
+    color: var(--verde-medio);
+    text-decoration: underline;
+}
+
+.lista-textos p {
+    margin: 0;
+    line-height: 1.8;
+    text-align: justify;
+    text-indent: 0;
+}
+
+/* ===== LEITURA DOS ARTIGOS E POEMAS ===== */
+
+#conteudo-artigo {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 35px 40px;
+    color: var(--verde-escuro);
+    line-height: 1.9;
+}
+
+#conteudo-artigo h1 {
+    margin-bottom: 25px;
+    font-family: Cambria, Georgia, serif;
+    font-size: 34px;
+    font-weight: normal;
+}
+
+#conteudo-artigo h2,
+#conteudo-artigo h3 {
+    margin-top: 35px;
+    font-family: Cambria, Georgia, serif;
+    font-weight: normal;
+}
+
+#conteudo-artigo p {
+    margin: 0 0 20px;
+    text-indent: 2em;
+    text-align: justify;
+}
+
+#conteudo-artigo p:has(br) {
+    text-indent: 0;
+    text-align: left;
+}
+
+#conteudo-artigo blockquote {
+    margin: 25px 0;
+    padding: 5px 20px;
+    border-left: 3px solid var(--verde-medio);
+    color: var(--verde-medio);
+    font-family: Cambria, Georgia, serif;
+    font-style: italic;
+}
+
+#conteudo-artigo hr {
+    border: none;
+    height: 1px;
+    background-color: var(--linha);
+    margin: 30px 0;
+}
+
+/* ===== FRASE SEMANAL ===== */
+
+#frasesemanal {
+    display: flex;
+    max-width: 450px;
+    margin: 30px auto;
+    padding: 25px;
+    background-color: var(--verde-escuro);
+    border-radius: 10px;
+}
+
+#frase {
+    margin: auto;
+    color: var(--texto-claro);
+    font-family: Cambria, Georgia, serif;
+    font-size: 17px;
+    font-style: italic;
+    line-height: 1.7;
+    text-align: center;
+    text-indent: 0;
+}
+
+/* ===== RODAPÉ ===== */
+
+footer {
+    min-height: 35px;
+    padding: 10px;
+    background-color: var(--verde-escuro);
+    color: var(--texto-claro);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+@media (max-width: 768px) {
+    main {
+        width: 100%;
+        padding: 20px 15px 40px;
+    }
+
+    main > h1 {
+        font-size: 26px;
+    }
+
+    nav > a {
+        padding: 10px;
+        font-size: 17px;
+    }
+
+    .secao {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .texto {
+        padding: 10px 15px;
+    }
+
+    .lista-textos {
+        padding: 15px 10px;
+    }
+
+    .lista-textos h2 {
+        font-size: 21px;
+    }
+
+    #conteudo-artigo {
+        margin: 25px auto;
+        padding: 20px 10px;
+    }
+
+    #conteudo-artigo h1 {
+        font-size: 28px;
+    }
+}
+.links-pessoais {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 500px;
+    margin: 30px auto;
+}
+
+.links-pessoais a {
+    display: block;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--linha);
+    border-radius: 8px;
+    transition: 0.2s ease;
+    background-color: #dce8dc;
+}
+
+.links-pessoais a:hover {
+    background-color: var(--painel);
+}
+
+
+
+/* ===== SELETOR DE IDIOMA ===== */
+
+.idioma {
+    display: inline-block;
+    padding: 12px 5px;
+    border: none;
+    background: transparent;
+    color: var(--texto-claro);
+    font-family: Cambria, Georgia, serif;
+    font-size: 17px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.idioma:hover,
+.idioma.ativo {
+    color: var(--linha);
+}
+
+.separador-idioma {
+    color: var(--texto-claro);
+}
