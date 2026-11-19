@@ -1,7 +1,204 @@
+
 ---
 import Base from "../../layouts/Base.astro";
+
+const pinturas = [
+    {
+        imagem: "/imagens/desenhos/mato.webp",
+        data: "11/19/2026",
+        titulo: "Serra da Mantiqueira (Mantiqueira Mountains)",
+        descricao:
+            "A beginner's painting depicting the landscape of the eastern region of São José dos Campos.",
+    },
+    {
+        imagem: "/imagens/desenhos/pedra.webp",
+        data: "?/?/2025",
+        titulo: "Bridge",
+        descricao:
+            "A painting made during an art class, inspired by a European artwork whose name, unfortunately, I cannot remember.",
+    },
+];
 ---
 
-<Base title="[English page title] | Syneidesis" lang="en">
-    <h1>Under development</h1>
+<Base title="Drawings | Syneidesis" lang="en">
+    <section class="galeria">
+        <h1>Drawings and paintings</h1>
+
+        <div class="pinturas">
+            {pinturas.map((pintura) => (
+                <article class="pintura">
+                    <button
+                        class="imagem-container"
+                        type="button"
+                        aria-label={`Enlarge ${pintura.titulo}`}
+                        data-imagem={pintura.imagem}
+                        data-titulo={pintura.titulo}
+                    >
+                        <img src={pintura.imagem} alt={pintura.titulo} />
+                    </button>
+
+                    <div class="informacoes">
+                        <p class="data">{pintura.data}</p>
+                        <h2>{pintura.titulo}</h2>
+                        <p class="descricao">{pintura.descricao}</p>
+                    </div>
+                </article>
+            ))}
+        </div>
+    </section>
+
+    <dialog id="visualizador">
+        <button class="fechar" aria-label="Close image">
+            ×
+        </button>
+        <img id="imagem-ampliada" src="" alt="" />
+        <p id="titulo-ampliado"></p>
+    </dialog>
 </Base>
+
+<style>
+    .galeria {
+        max-width: 1100px;
+        margin: 50px auto;
+        padding: 0 25px;
+    }
+
+    .galeria h1 {
+        margin-bottom: 35px;
+        text-align: center;
+    }
+
+    .pinturas {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 45px 30px;
+    }
+
+    .pintura {
+        min-width: 0;
+    }
+
+    .imagem-container {
+        display: block;
+        width: 100%;
+        padding: 0;
+        border: none;
+        background: none;
+        cursor: zoom-in;
+    }
+
+    .imagem-container img {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 380px;
+        object-fit: contain;
+        background: rgba(0, 0, 0, 0.04);
+        border: 4px solid #718b75;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .informacoes {
+        padding-top: 14px;
+    }
+
+    .data {
+        margin: 0 0 7px;
+        font-size: 0.85rem;
+        opacity: 0.65;
+    }
+
+    .informacoes h2 {
+        margin: 0 0 8px;
+        font-size: 1.2rem;
+    }
+
+    .descricao {
+        margin: 0;
+        line-height: 1.6;
+        font-style: italic;
+    }
+
+    #visualizador {
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        max-height: none;
+        padding: 45px;
+        border: none;
+        background: rgba(0, 0, 0, 0.96);
+        color: white;
+        box-sizing: border-box;
+    }
+
+    #visualizador[open] {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #visualizador::backdrop {
+        background: rgba(0, 0, 0, 0.96);
+    }
+
+    #imagem-ampliada {
+        max-width: 100%;
+        max-height: 85vh;
+        object-fit: contain;
+    }
+
+    #titulo-ampliado {
+        margin-top: 15px;
+    }
+
+    .fechar {
+        position: absolute;
+        top: 15px;
+        right: 25px;
+        border: none;
+        background: none;
+        color: white;
+        font-size: 2.5rem;
+        cursor: pointer;
+    }
+
+    @media (max-width: 650px) {
+        .pinturas {
+            grid-template-columns: 1fr;
+        }
+
+        .imagem-container img {
+            max-height: 320px;
+        }
+
+        #visualizador {
+            padding: 20px;
+        }
+    }
+</style>
+
+<script>
+    const visualizador = document.querySelector("#visualizador");
+    const imagemAmpliada = document.querySelector("#imagem-ampliada");
+    const tituloAmpliado = document.querySelector("#titulo-ampliado");
+    const fechar = document.querySelector(".fechar");
+
+    document.querySelectorAll(".imagem-container").forEach((botao) => {
+        botao.addEventListener("click", () => {
+            imagemAmpliada.src = botao.dataset.imagem;
+            imagemAmpliada.alt = botao.dataset.titulo;
+            tituloAmpliado.textContent = botao.dataset.titulo;
+            visualizador.showModal();
+        });
+    });
+
+    fechar.addEventListener("click", () => visualizador.close());
+
+    visualizador.addEventListener("click", (evento) => {
+        if (evento.target === visualizador) {
+            visualizador.close();
+        }
+    });
+</script>
