@@ -1,7 +1,694 @@
 ---
 import Base from "../../layouts/Base.astro";
+
+const livros = [
+    {
+        title: "The Sandman",
+        author: "E. T. A. Hoffmann",
+        cover: "/imagens/livros/areia.jpeg",
+        status: "Read",
+        rating: 3,
+    },
+    {
+        title: "The Robbers",
+        author: "Friedrich Schiller",
+        cover: "/imagens/livros/bb.jpeg",
+        status: "Reading",
+        rating: null,
+    },
+    {
+        title: "The Flowers of the Sheet",
+        author: "Guilherme de Lima",
+        cover: "/imagens/livros/fl.jpeg",
+        status: "Read",
+        rating: 3.5,
+    },
+    {
+        title: "First Love",
+        author: "Ivan Turgenev",
+        cover: "/imagens/livros/pa.jpeg",
+        status: "Read",
+        rating: 4,
+    },
+    {
+        title: "The Diary of a Superfluous Man",
+        author: "Ivan Turgenev",
+        cover: "/imagens/livros/dia.jpeg",
+        status: "Read",
+        rating: 3.5,
+    },
+    {
+        title: "The Beggars' Strike",
+        author: "Aminata Sow Fall",
+        cover: "/imagens/livros/agreev.jpeg",
+        status: "Read",
+        rating: 2.5,
+    },
+    {
+        title: "The God Who Destroys Dreams",
+        author: "Rodrigo Bibo",
+        cover: "/imagens/livros/destroi.jpeg",
+        status: "Read",
+        rating: 2,
+    },
+    {
+        title: "The Enamored Dove",
+        author: "Lygia Fagundes Telles",
+        cover: "/imagens/livros/pe.jpeg",
+        status: "Read",
+        rating: 2,
+    },
+    {
+        title: "The Sorrows of Young Werther",
+        author: "Johann Wolfgang von Goethe",
+        cover: "/imagens/livros/werther.webp",
+        status: "Read",
+        rating: 5,
+    },
+    {
+        title: "Women",
+        author: "Osamu Dazai",
+        cover: "/imagens/livros/m.jpeg",
+        status: "Read",
+        rating: 4,
+    },
+    {
+        title: "What Is Philosophy?",
+        author: "Martin Heidegger",
+        cover: "/imagens/livros/qei.jpeg",
+        status: "Read",
+        rating: 4,
+    },
+    {
+        title: "Where Love Is, God Is",
+        author: "Leo Tolstoy",
+        cover: "/imagens/livros/deusai.jpeg",
+        status: "Read",
+        rating: 3,
+    },
+    {
+        title: "Industrial Society and Its Future",
+        author: "Theodore J. Kaczynski",
+        cover: "/imagens/livros/ses.webp",
+        status: "Reading",
+        rating: null,
+    },
+    {
+        title: "The Names",
+        author: "Florence Knapp",
+        cover: "/imagens/livros/nomes.jpeg",
+        status: "Read",
+        rating: 3,
+    },
+    {
+        title: "Strange Pictures",
+        author: "Uketsu",
+        cover: "/imagens/livros/ie.jpeg",
+        status: "Read",
+        rating: 4,
+    },
+    {
+        title: "Strange Houses 2",
+        author: "Uketsu",
+        cover: "/imagens/livros/ce2.jpeg",
+        status: "Read",
+        rating: 3.5,
+    },
+    {
+        title: "Strange Houses",
+        author: "Uketsu",
+        cover: "/imagens/livros/ce.jpeg",
+        status: "Read",
+        rating: 4.5,
+    },
+    {
+        title: "Death and Life of Severino",
+        author: "João Cabral de Melo Neto",
+        cover: "/imagens/livros/mvs.jpeg",
+        status: "Read",
+        rating: 4,
+    },
+    {
+        title: "Martha's Memoirs",
+        author: "Júlia Lopes de Almeida",
+        cover: "/imagens/livros/mm.jpeg",
+        status: "Read",
+        rating: 4,
+    },
+    {
+        title: "Stone Paths",
+        author: "Rachel de Queiroz",
+        cover: "/imagens/livros/cp.jpeg",
+        status: "Read",
+        rating: 3,
+    },
+    {
+        title: "Ten Arguments for Deleting Your Social Media Accounts Right Now",
+        author: "Jaron Lanier",
+        cover: "/imagens/livros/da.jpeg",
+        status: "Read",
+        rating: 4,
+    },
+    {
+        title: "We Do Not Part",
+        author: "Han Kang",
+        cover: "/imagens/livros/sde.jpeg",
+        status: "Read",
+        rating: 3.5,
+    },
+    {
+        title: "Gore Capitalism",
+        author: "Sayak Valencia",
+        cover: "/imagens/livros/cgore.jpeg",
+        status: "Reading",
+        rating: null,
+    },
+    {
+        title: "Run, Melos!",
+        author: "Osamu Dazai",
+        cover: "/imagens/livros/corra.jpeg",
+        status: "Read",
+        rating: 4,
+    },
+    {
+        title: "The Setting Sun",
+        author: "Osamu Dazai",
+        cover: "/imagens/livros/solpoente.jpeg",
+        status: "Read",
+        rating: 3.5,
+    },
+    {
+        title: "No Longer Human (Junji Ito)",
+        author: "Osamu Dazai",
+        cover: "/imagens/livros/mangad.jpeg",
+        status: "Read",
+        rating: 2.5,
+    },
+    {
+        title: "Discourse on Decadence",
+        author: "Ango Sakaguchi",
+        cover: "/imagens/livros/decadencia.jpeg",
+        status: "Read",
+        rating: 3,
+    },
+    {
+        title: "Schoolgirl",
+        author: "Osamu Dazai",
+        cover: "/imagens/livros/colegial.jpeg",
+        status: "Read",
+        rating: 3,
+    },
+    {
+        title: "A Confession",
+        author: "Leo Tolstoy",
+        cover: "/imagens/livros/confissao.jpeg",
+        status: "Read",
+        rating: 2.5,
+    },
+    {
+        title: "Don't Despair!",
+        author: "Mario Sergio Cortella",
+        cover: "/imagens/livros/desespere.webp",
+        status: "Read",
+        rating: 1,
+    },
+    {
+        title: "A Song for a Big Boy",
+        author: "Conceição Evaristo",
+        cover: "/imagens/livros/fio.jpeg",
+        status: "Read",
+        rating: 4.5,
+    },
+    {
+        title: "Goodbye",
+        author: "Osamu Dazai",
+        cover: "/imagens/livros/gb.jpeg",
+        status: "Read",
+        rating: 2.5,
+    },
+    {
+        title: "The Flowers of Buffoonery",
+        author: "Osamu Dazai",
+        cover: "/imagens/livros/bufonaria.jpeg",
+        status: "Read",
+        rating: 3.5,
+    },
+    {
+        title: "Beyond Nature and Culture",
+        author: "Philippe Descola",
+        cover: "/imagens/livros/onoc.jpeg",
+        status: "Read",
+        rating: 2,
+    },
+    {
+        title: "No Longer Human",
+        author: "Osamu Dazai",
+        cover: "/imagens/livros/declinio.jpeg",
+        status: "Read",
+        rating: 4.5,
+    },
+    {
+        title: "The Symposium",
+        author: "Plato",
+        cover: "/imagens/livros/banquete.webp",
+        status: "Read",
+        rating: 3.5,
+    },
+    {
+        title: "How Much Land Does a Man Need?",
+        author: "Leo Tolstoy",
+        cover: "/imagens/livros/terra.jpeg",
+        status: "Read",
+        rating: 3.5,
+    },
+    {
+        title: "Politics",
+        author: "Aristotle",
+        cover: "/imagens/livros/ppp.webp",
+        status: "Read",
+        rating: 3.5,
+    },
+    {
+        title: "Byung-Chul Han",
+        author: "Byung-Chul Han",
+        cover: "/imagens/livros/sdc.jpeg",
+        status: "Read",
+        rating: 4,
+    },
+    {
+        title: "Discourse on Method",
+        author: "René Descartes",
+        cover: "/imagens/livros/ddm.jpeg",
+        status: "Read",
+        rating: 3,
+    },
+    {
+        title: "The State and Revolution",
+        author: "Vladimir Lenin",
+        cover: "/imagens/livros/earv.png",
+        status: "Read",
+        rating: 4,
+    },
+    {
+        title: "The Vision of Plants",
+        author: "Djaimilia Pereira de Almeida",
+        cover: "/imagens/livros/visaop.jpeg",
+        status: "Read",
+        rating: 3.5,
+    },
+    {
+        title: "Siddhartha",
+        author: "Hermann Hesse",
+        cover: "/imagens/livros/hh.jpeg",
+        status: "Read",
+        rating: 0,
+    },
+    {
+        title: "The Myth of Sisyphus",
+        author: "Albert Camus",
+        cover: "/imagens/livros/s.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "The Travelling Cat Chronicles",
+        author: "Hiro Arikawa",
+        cover: "/imagens/livros/gatoviajante.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "The Death of Ivan Ilyich",
+        author: "Leo Tolstoy",
+        cover: "/imagens/livros/ivanilitch.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "On a Supposed Right to Lie",
+        author: "Immanuel Kant",
+        cover: "/imagens/livros/mentird.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "What Is Enlightenment?",
+        author: "Immanuel Kant",
+        cover: "/imagens/livros/esclarecimento.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "Ten Days in a Mad-House",
+        author: "Nellie Bly",
+        cover: "/imagens/livros/hospicio.jpeg",
+        status: "Read",
+        rating: 4,
+    },
+    {
+        title: "Letting Go with Schopenhauer",
+        author: "Céline Belloq",
+        cover: "/imagens/livros/desapego.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "The Midnight Library",
+        author: "Matt Haig",
+        cover: "/imagens/livros/bibliotecam.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "Life Is Not Useful",
+        author: "Ailton Krenak",
+        cover: "/imagens/livros/vidanutil.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "The Alchemist",
+        author: "Paulo Coelho",
+        cover: "/imagens/livros/alquimista.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "To Kill a Mockingbird",
+        author: "Harper Lee",
+        cover: "/imagens/livros/solp.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "Alice's Adventures in Wonderland",
+        author: "Lewis Carroll",
+        cover: "/imagens/livros/alice.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "Two Fantastic Tales",
+        author: "Fyodor Dostoevsky",
+        cover: "/imagens/livros/duasnarrativas.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "Existentialism Is a Humanism",
+        author: "Jean-Paul Sartre",
+        cover: "/imagens/livros/oexistencialismo.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "The Metaphysics of Love",
+        author: "Arthur Schopenhauer",
+        cover: "/imagens/livros/metafisicadoamor.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "The Stranger",
+        author: "Albert Camus",
+        cover: "/imagens/livros/estrangeiro.webp",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "Ideas to Postpone the End of the World",
+        author: "Ailton Krenak",
+        cover: "/imagens/livros/adiarfimdomundo.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "Sophie's World",
+        author: "Jostein Gaarder",
+        cover: "/imagens/livros/mundosofia.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "The Metamorphosis",
+        author: "Franz Kafka",
+        cover: "/imagens/livros/metamorfose.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "The Dictatorship of Beauty and the Women's Revolution",
+        author: "Karl Marx & Friedrich Engels",
+        cover: "/imagens/livros/ditadurab.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "White Nights",
+        author: "Fyodor Dostoevsky",
+        cover: "/imagens/livros/noitesb.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "The Communist Manifesto",
+        author: "Karl Marx & Friedrich Engels",
+        cover: "/imagens/livros/manifestocomunista.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "No Exit",
+        author: "Jean-Paul Sartre",
+        cover: "/imagens/livros/quatroparedes.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "The Apology of Socrates",
+        author: "Plato",
+        cover: "/imagens/livros/apologia.jpeg",
+        status: "Read",
+        rating: null,
+    },
+    {
+        title: "On The Suffering of The World",
+        author: "Arthur Schopenhauer",
+        cover: "/imagens/livros/dores.jpeg",
+        status: "Read",
+        rating: 5.0,
+    },
+    {
+        title: "The Perks of Being a Wallflower",
+        author: "Stephen Chbosky",
+        cover: "/imagens/livros/vantagens.jpeg",
+        status: "Read",
+        rating: null,
+    },
+];
+
+const categorias = ["All", "Read", "Reading", "Want to Read"];
 ---
 
-<Base title="[English page title] | Syneidesis" lang="en">
-    <h1>Under development</h1>
+<Base title="My Bookshelf | Syneidesis" lang="en">
+    <main class="biblioteca">
+        <nav class="categorias">
+            <button class="ativo" data-filtro="All">
+                All
+            </button>
+            <button data-filtro="Read">Read</button>
+            <button data-filtro="Reading">Reading</button>
+            <button data-filtro="Want to Read">Want to Read</button>
+        </nav>
+
+        <section class="estante">
+            <h2>My bookshelf</h2>
+
+            <div class="livros">
+                {livros.map((livro) => (
+                    <article class="livro" data-status={livro.status}>
+                        <div class="imagem-container">
+                            <img
+                                src={livro.cover}
+                                alt={`Cover of ${livro.title}`}
+                            />
+                        </div>
+
+                        <div class="informacoes">
+                            <h3>{livro.title}</h3>
+                            <p>{livro.author}</p>
+
+                            {livro.rating !== null && (
+                                <div
+                                    class="avaliacao"
+                                    aria-label={`Rating: ${livro.rating} out of 5 stars`}
+                                >
+                                    {Array.from({ length: 5 }, (_, i) => {
+                                        const valor = livro.rating - i;
+
+                                        return (
+                                            <span
+                                                class={`estrela ${valor >= 1 ? "preenchida" : valor >= 0.5 ? "meia" : ""}`}
+                                            >
+                                                ★
+                                            </span>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
+                            <span>{livro.status}</span>
+                        </div>
+                    </article>
+                ))}
+            </div>
+        </section>
+    </main>
 </Base>
+
+<script>
+    const botoes = document.querySelectorAll(".categorias button");
+    const livros = document.querySelectorAll(".livro");
+
+    botoes.forEach((botao) => {
+        botao.addEventListener("click", () => {
+            const filtro = botao.dataset.filtro;
+
+            botoes.forEach((b) => b.classList.remove("ativo"));
+            botao.classList.add("ativo");
+
+            livros.forEach((livro) => {
+                const status = livro.getAttribute("data-status");
+
+                livro.hidden = filtro !== "All" && status !== filtro;
+            });
+        });
+    });
+</script>
+
+<style>
+    .biblioteca {
+        max-width: 100%;
+    }
+
+    header {
+        margin-bottom: 2rem;
+    }
+
+    header p {
+        opacity: 0.7;
+    }
+
+    .categorias {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+        border-bottom: 1px solid var(--border-color, #8884);
+        padding-bottom: 1rem;
+    }
+
+    .categorias button {
+        background: none;
+        border: none;
+        padding: 0;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        opacity: 0.6;
+    }
+
+    .categorias button:hover,
+    .categorias button.ativo {
+        opacity: 1;
+    }
+
+    .categorias button.ativo {
+        font-weight: bold;
+    }
+
+    .livro[hidden] {
+        display: none;
+    }
+
+    .imagem-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 280px;
+        margin-bottom: 8px;
+    }
+
+    .imagem-container img {
+        display: block;
+        width: auto;
+        height: auto;
+        max-width: 180px;
+        max-height: 270px;
+        object-fit: contain;
+        border: 4px solid #718b75;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .livros {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 2rem;
+    }
+
+    .informacoes h3 {
+        font-size: 1.1rem;
+        margin: 0 0 4px;
+    }
+
+    .informacoes {
+        padding-left: 22px;
+    }
+
+    .informacoes p {
+        font-size: 0.95rem;
+        margin: 0 0 4px;
+        opacity: 0.7;
+    }
+
+    .informacoes > span {
+        display: block;
+        font-size: 0.9rem;
+        margin-top: 3px;
+        opacity: 0.6;
+    }
+
+    .avaliacao {
+        display: flex;
+        gap: 1px;
+        margin: 2px 0;
+    }
+
+    .estrela {
+        font-size: 1.2rem;
+        color: #888;
+        opacity: 0.35;
+        line-height: 1;
+    }
+
+    .estrela.preenchida {
+        color: #d6a84b;
+        opacity: 1;
+    }
+
+    .estrela.meia {
+        background: linear-gradient(90deg, #d6a84b 50%, #888 50%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        opacity: 1;
+    }
+
+    @media (max-width: 650px) {
+        .imagem-container img {
+            max-height: 320px;
+        }
+    }
+</style>

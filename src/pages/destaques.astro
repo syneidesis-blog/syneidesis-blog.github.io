@@ -1,8 +1,258 @@
-
 ---
 import Base from "../layouts/Base.astro";
+
+const filmes = [
+    {
+        titulo: "Resident Evil",
+        diretor: "Zach Cregger",
+        poster: "/imagens/filmes/re.webp",
+        status: "Assistido",
+        avaliacao: 3.5,
+    },
+    {
+        titulo: "Obsession",
+        diretor: "Curry Barker",
+        poster: "/imagens/filmes/ob.jpg",
+        status: "Assistido",
+        avaliacao: 4,
+    },
+    {
+        titulo: "Cidade de Deus",
+        diretor: "Fernando Meirelles",
+        poster: "/imagens/filmes/cdd.webp",
+        status: "Assistido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Les Derniers Jours d'Emmanuel Kant",
+        diretor: "Philippe Collin",
+        poster: "/imagens/filmes/les.webp",
+        status: "Assistido",
+        avaliacao: 4,
+    },
+    {
+        titulo: "To kill a mockingbird",
+        diretor: "Robert Mulligan",
+        poster: "/imagens/filmes/tk.webp",
+        status: "Assistido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Белые ночи (Belye nochi)",
+        diretor: "Ivan Pyryev",
+        poster: "/imagens/filmes/noites.jpg",
+        status: "Assistido",
+        avaliacao: 3.5,
+    },
+    {
+        titulo: "Le Roman de Werther",
+        diretor: "Max Ophüls",
+        poster: "/imagens/filmes/werther.webp",
+        status: "Assistido",
+        avaliacao: 4.5,
+    },
+];
 ---
 
-<Base title="Destaques | Syneidesis">
-    <h1>Em desenvolvimento</h1>
+<Base title="Filmoteca | Syneidesis">
+    <main class="filmoteca">
+        <nav class="categorias">
+            <button class="ativo" data-filtro="Todos">
+                Todos
+            </button>
+            <button data-filtro="Assistido">Assistidos</button>
+            <button data-filtro="Assistindo">Assistindo</button>
+            <button data-filtro="Quero assistir">Quero assistir</button>
+        </nav>
+
+        <section class="estante">
+            <h2>Minha filmoteca</h2>
+
+            <div class="filmes">
+                {filmes.map((filme) => (
+                    <article class="filme" data-status={filme.status}>
+                        <div class="poster-container">
+                            <img
+                                src={filme.poster}
+                                alt={`Pôster de ${filme.titulo}`}
+                            />
+                        </div>
+
+                        <div class="informacoes">
+                            <h3>{filme.titulo}</h3>
+                            <p>{filme.diretor}</p>
+
+                            {filme.avaliacao !== null && (
+                                <div
+                                    class="avaliacao"
+                                    aria-label={`Nota: ${filme.avaliacao} de 5 estrelas`}
+                                >
+                                    {Array.from({ length: 5 }, (_, i) => {
+                                        const valor = filme.avaliacao - i;
+
+                                        return (
+                                            <span
+                                                class={`estrela ${valor >= 1 ? "preenchida" : valor >= 0.5 ? "meia" : ""}`}
+                                            >
+                                                ★
+                                            </span>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
+                            <span>{filme.status}</span>
+                        </div>
+                    </article>
+                ))}
+            </div>
+        </section>
+    </main>
 </Base>
+
+<script>
+    const botoes = document.querySelectorAll(".categorias button");
+    const filmes = document.querySelectorAll(".filme");
+
+    botoes.forEach((botao) => {
+        botao.addEventListener("click", () => {
+            const filtro = botao.dataset.filtro;
+
+            botoes.forEach((b) => b.classList.remove("ativo"));
+            botao.classList.add("ativo");
+
+            filmes.forEach((filme) => {
+                const status = filme.getAttribute("data-status");
+
+                filme.hidden = filtro !== "Todos" && status !== filtro;
+            });
+        });
+    });
+</script>
+
+<style>
+    .filmoteca {
+        max-width: 100%;
+    }
+
+    header {
+        margin-bottom: 2rem;
+    }
+
+    header p {
+        opacity: 0.7;
+    }
+
+    .categorias {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+        border-bottom: 1px solid var(--border-color, #8884);
+        padding-bottom: 1rem;
+    }
+
+    .categorias button {
+        background: none;
+        border: none;
+        padding: 0;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        opacity: 0.6;
+    }
+
+    .categorias button:hover,
+    .categorias button.ativo {
+        opacity: 1;
+    }
+
+    .categorias button.ativo {
+        font-weight: bold;
+    }
+
+    .filme[hidden] {
+        display: none;
+    }
+
+    .poster-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 280px;
+        margin-bottom: 8px;
+    }
+
+    .poster-container img {
+        display: block;
+        width: auto;
+        height: auto;
+        max-width: 180px;
+        max-height: 270px;
+        object-fit: contain;
+        border: 4px solid #718b75;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .filmes {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 2rem;
+    }
+
+    .informacoes h3 {
+        font-size: 1.1rem;
+        margin: 0 0 4px;
+    }
+
+    .informacoes {
+        padding-left: 22px;
+    }
+
+    .informacoes p {
+        font-size: 0.95rem;
+        margin: 0 0 4px;
+        opacity: 0.7;
+    }
+
+    .informacoes > span {
+        display: block;
+        font-size: 0.9rem;
+        margin-top: 3px;
+        opacity: 0.6;
+    }
+
+    .avaliacao {
+        display: flex;
+        gap: 1px;
+        margin: 2px 0;
+    }
+
+    .estrela {
+        font-size: 1.2rem;
+        color: #888;
+        opacity: 0.35;
+        line-height: 1;
+    }
+
+    .estrela.preenchida {
+        color: #d6a84b;
+        opacity: 1;
+    }
+
+    .estrela.meia {
+        background: linear-gradient(90deg, #d6a84b 50%, #888 50%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        opacity: 1;
+    }
+
+    @media (max-width: 650px) {
+        .poster-container img {
+            max-height: 320px;
+        }
+    }
+</style>
