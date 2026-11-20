@@ -1,8 +1,639 @@
-
 ---
 import Base from "../layouts/Base.astro";
+
+const livros = [
+    {
+        titulo: "O homem de areia",
+        autor: "E. T. A. Hoffmann",
+        capa: "/imagens/livros/areia.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Os bandoleiros",
+        autor: "Schiller",
+        capa: "/imagens/livros/bb.jpeg",
+        status: "Lendo",
+        avaliacao: 5,
+    },
+    {
+        titulo: "As flores do lençol",
+        autor: "Guilherme de Lima",
+        capa: "/imagens/livros/fl.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Primeiro Amor",
+        autor: "Ivan Turguêniev",
+        capa: "/imagens/livros/pa.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O diário de um homem supérfluo",
+        autor: "Ivan Turguêniev",
+        capa: "/imagens/livros/dia.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "A greve dos mendigos",
+        autor: "Aminata Sow Fall",
+        capa: "/imagens/livros/agreev.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O Deus que destrói sonhos",
+        autor: "Rodrigo Bibo",
+        capa: "/imagens/livros/destroi.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Pomba enamorada",
+        autor: "Lygia Fagundes Telles",
+        capa: "/imagens/livros/pe.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Os sofrimentos do jovem Werther",
+        autor: "Johann Wolfgang von Goethe",
+        capa: "/imagens/livros/werther.webp",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Mulheres",
+        autor: "Osamu Dazai",
+        capa: "/imagens/livros/m.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Que é isto - A filosofia?",
+        autor: "Martin Heidegger",
+        capa: "/imagens/livros/qei.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Onde existe amor, Deus aí está",
+        autor: "Liev Tolstói",
+        capa: "/imagens/livros/deusai.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "A sociedade industrial e seu futuro",
+        autor: "Theodore J. Kaczynski",
+        capa: "/imagens/livros/ses.webp",
+        status: "Lendo",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Os nomes",
+        autor: "Florence Knapp",
+        capa: "/imagens/livros/nomes.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Imagens Estranhas",
+        autor: "Uketsu",
+        capa: "/imagens/livros/ie.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Casas estranhas 2",
+        autor: "Uketsu",
+        capa: "/imagens/livros/ce2.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Casas estranhas",
+        autor: "Uketsu",
+        capa: "/imagens/livros/ce.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Morte e vida severina",
+        autor: "João Cabral de Melo Neto",
+        capa: "/imagens/livros/mvs.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Memórias de Martha",
+        autor: "Júlia Lopes de Almeida",
+        capa: "/imagens/livros/mm.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Caminhos de pedras",
+        autor: "Rachel de Queiroz",
+        capa: "/imagens/livros/cp.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Dez argumentos para você deletar agora suas redes sociais",
+        autor: "Jaron Lanier",
+        capa: "/imagens/livros/da.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Sem despedidas",
+        autor: "Han Kang",
+        capa: "/imagens/livros/sde.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Capitalismo Gore",
+        autor: "Sayak Valencia",
+        capa: "/imagens/livros/cgore.jpeg",
+        status: "Lendo",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Corra, Melos",
+        autor: "Osamu Dazai",
+        capa: "/imagens/livros/corra.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O sol poente",
+        autor: "Osamu Dazai",
+        capa: "/imagens/livros/solpoente.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Declínio de um homem - Junji Ito",
+        autor: "Osamu Dazai",
+        capa: "/imagens/livros/mangad.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Discurso sobre a decadência",
+        autor: "Ango Sakaguchi",
+        capa: "/imagens/livros/decadencia.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "A colegial",
+        autor: "Osamu Dazai",
+        capa: "/imagens/livros/colegial.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Uma confissão",
+        autor: "Liev tolstói",
+        capa: "/imagens/livros/confissao.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Não se desespere!",
+        autor: "Mario Sergio Cortella",
+        capa: "/imagens/livros/desespere.webp",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Canção para ninar menino grande",
+        autor: "Conceição Evaristo",
+        capa: "/imagens/livros/fio.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Goodbye",
+        autor: "Osamua Dazai",
+        capa: "/imagens/livros/gb.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "As flores da bufonaria",
+        autor: "Osamu Dazai",
+        capa: "/imagens/livros/bufonaria.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Outras naturezas, outras culturas",
+        autor: "Philippe Descola",
+        capa: "/imagens/livros/onoc.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Declínio de um homem",
+        autor: "Osamu Dazai",
+        capa: "/imagens/livros/declinio.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O banquete",
+        autor: "Platão",
+        capa: "/imagens/livros/banquete.webp",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "De quanta terra precisa um homem?",
+        autor: "Liev Tolstói",
+        capa: "/imagens/livros/sdc.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Política",
+        autor: "Aristóteles",
+        capa: "/imagens/livros/ppp.webp",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Byung-Chul Han",
+        autor: "Byung-Chul Han",
+        capa: "/imagens/livros/sdc.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Discurso do método",
+        autor: "Descartes",
+        capa: "/imagens/livros/ddm.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O estado e a revoulução",
+        autor: "Vladimir Ilitch Lenin",
+        capa: "/imagens/livros/earv.png",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "A visão das plantas",
+        autor: "Djaimilia Pereira de Almeida",
+        capa: "/imagens/livros/visaop.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Sidarta",
+        autor: "Hermann Hesse",
+        capa: "/imagens/livros/hh.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O mito de sísifo",
+        autor: "Djaimilia Pereira de Almeida",
+        capa: "/imagens/livros/s.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Relatos de um gato viajante",
+        autor: "Hiro Arikawa",
+        capa: "/imagens/livros/gatoviajante.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "A morte de Ivan Ilitch",
+        autor: "Lev Tolstói",
+        capa: "/imagens/livros/ivanilitch.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Sobre um suposto direito de mentir",
+        autor: "Immanuel Kant",
+        capa: "/imagens/livros/mentird.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O que é o Esclarecimento?",
+        autor: "Immanuel Kant",
+        capa: "/imagens/livros/esclarecimento.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Dez dias num hospício",
+        autor: "Nellie Bly",
+        capa: "/imagens/livros/hospicio.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Desapegar-se com Schopenhauer",
+        autor: "Céline Belloq",
+        capa: "/imagens/livros/desapego.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "A biblioteca da meia-noite",
+        autor: "Matt Haig",
+        capa: "/imagens/livros/bibliotecam.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "A vida não é útil",
+        autor: "Ailton Krenak",
+        capa: "/imagens/livros/vidanutil.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O alquimista",
+        autor: "Paulo Coelho",
+        capa: "/imagens/livros/alquimista.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O sol é para todos",
+        autor: "Harper Lee",
+        capa: "/imagens/livros/solp.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Alice no país das maravilhas",
+        autor: "Lewis Carroll",
+        capa: "/imagens/livros/alice.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Duas narrativas fantásticas",
+        autor: "Fiódor Dostoiévski",
+        capa: "/imagens/livros/duasnarrativas.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O existencialismo é um humanismo",
+        autor: "Jean Paul Sartre",
+        capa: "/imagens/livros/oexistencialismo.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "A metafísica do amor",
+        autor: "Arthur Schopenhauer",
+        capa: "/imagens/livros/metafisicadoamor.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O estrangeiro",
+        autor: "Albert Camus",
+        capa: "/imagens/livros/estrangeiro.webp",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Ideias para adiar o fim do mundo",
+        autor: "Ailton Krenak",
+        capa: "/imagens/livros/adiarfimdomundo.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O mundo de Sofia",
+        autor: "Jostein Gaarder",
+        capa: "/imagens/livros/mundosofia.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "A metamorfose",
+        autor: "Franz Kafka",
+        capa: "/imagens/livros/metamorfose.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "A ditadura da beleza e a revolução das mulheres",
+        autor: "Karl Marx & Friedrich Engels",
+        capa: "/imagens/livros/ditadurab.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Noites Brancas",
+        autor: "Fiódor Dostoiévski",
+        capa: "/imagens/livros/noitesb.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "O manifesto do partido comunista",
+        autor: "Karl Marx & Friedrich Engels",
+        capa: "/imagens/livros/manifestocomunista.jpeg",
+        status: "Lido",
+        avaliacao: 5,
+    },
+    {
+        titulo: "Entre quatro paredes",
+        autor: "Jean Paul Sartre",
+        capa: "/imagens/livros/quatroparedes.jpeg",
+        status: "Lido",
+        avaliacao: null,
+    },
+    {
+        titulo: "Apologia de Sócrates",
+        autor: "Platão",
+        capa: "/imagens/livros/apologia.jpeg",
+        status: "Lido",
+        avaliacao: null,
+    },
+    {
+        titulo: "As dores do mundo",
+        autor: "Arthur Schopenhauer",
+        capa: "/imagens/livros/dores.jpeg",
+        status: "Lido",
+        avaliacao: null,
+    },
+    {
+        titulo: "As vantagens de ser invisível",
+        autor: "Stephen Chbosky",
+        capa: "/imagens/livros/vantagens.jpeg",
+        status: "Lido",
+        avaliacao: null,
+    },
+];
+
+const categorias = ["Todos", "Lidos", "Lendo", "Quero ler"];
 ---
 
-<Base title="Leituras | Syneidesis">
-    <h1>Em desenvolvimento</h1>
+<Base title="Biblioteca | Syneidesis">
+    <main class="biblioteca">
+        <nav class="categorias">
+            <button class="ativo" data-filtro="Todos">
+                Todos
+            </button>
+            <button data-filtro="Lido">Lidos</button>
+            <button data-filtro="Lendo">Lendo</button>
+            <button data-filtro="Quero ler">Quero ler</button>
+        </nav>
+
+        <section class="estante">
+            <h2>Minha estante</h2>
+
+            <div class="livros">
+                {livros.map((livro) => (
+                    <article class="livro" data-status={livro.status}>
+                        <div class="imagem-container">
+                            <img
+                                src={livro.capa}
+                                alt={`Capa de ${livro.titulo}`}
+                            />
+                        </div>
+
+                        <div class="informacoes">
+                            <h3>{livro.titulo}</h3>
+                            <p>{livro.autor}</p>
+                            <span>{livro.status}</span>
+                        </div>
+                    </article>
+                ))}
+            </div>
+        </section>
+    </main>
 </Base>
+
+<script>
+    const botoes = document.querySelectorAll(".categorias button");
+    const livros = document.querySelectorAll(".livro");
+
+    botoes.forEach((botao) => {
+        botao.addEventListener("click", () => {
+            const filtro = botao.dataset.filtro;
+
+            botoes.forEach((b) => b.classList.remove("ativo"));
+            botao.classList.add("ativo");
+
+            livros.forEach((livro) => {
+                const status = livro.getAttribute("data-status");
+
+                livro.hidden = filtro !== "Todos" && status !== filtro;
+            });
+        });
+    });
+</script>
+
+<style>
+    .biblioteca {
+        max-width: 100%;
+    }
+
+    header {
+        margin-bottom: 2rem;
+    }
+
+    header p {
+        opacity: 0.7;
+    }
+
+    .categorias {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+        border-bottom: 1px solid var(--border-color, #8884);
+        padding-bottom: 1rem;
+    }
+
+    .categorias button {
+        background: none;
+        border: none;
+        padding: 0;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        opacity: 0.6;
+    }
+
+    .categorias button:hover,
+    .categorias button.ativo {
+        opacity: 1;
+    }
+
+    .categorias button.ativo {
+        font-weight: bold;
+    }
+
+    .livro[hidden] {
+        display: none;
+    }
+
+    .imagem-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 280px;
+    }
+
+    .imagem-container img {
+        display: block;
+        width: auto;
+        height: auto;
+        max-width: 180px;
+        max-height: 270px;
+        object-fit: contain;
+        border: 4px solid #718b75;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .livros {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 2rem;
+    }
+
+    .informacoes h3 {
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .informacoes p {
+        font-size: 0.85rem;
+        opacity: 0.7;
+    }
+
+    .informacoes span {
+        font-size: 0.8rem;
+        opacity: 0.6;
+    }
+    @media (max-width: 650px) {
+        .imagem-container img {
+            max-height: 320px;
+        }
+    }
+</style>
