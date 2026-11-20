@@ -65,6 +65,15 @@ const filmes = [
             <button data-filtro="Quero assistir">Quero assistir</button>
         </nav>
 
+        <div class="pesquisa">
+            <input
+                type="search"
+                id="pesquisar-filmes"
+                placeholder="Pesquisar filme ou diretor..."
+                aria-label="Pesquisar filme ou diretor"
+            />
+        </div>
+
         <section class="estante">
             <h2>Minha filmoteca</h2>
 
@@ -113,21 +122,40 @@ const filmes = [
 <script>
     const botoes = document.querySelectorAll(".categorias button");
     const filmes = document.querySelectorAll(".filme");
+    const pesquisa = document.querySelector("#pesquisar-filmes");
+
+    let filtroAtual = "Todos";
+
+    function atualizarFilmes() {
+        const termo = pesquisa.value.toLowerCase().trim();
+
+        filmes.forEach((filme) => {
+            const status = filme.getAttribute("data-status");
+            const titulo = filme.querySelector("h3").textContent.toLowerCase();
+            const diretor = filme.querySelector("p").textContent.toLowerCase();
+
+            const correspondeStatus =
+                filtroAtual === "Todos" || status === filtroAtual;
+
+            const correspondePesquisa =
+                titulo.includes(termo) || diretor.includes(termo);
+
+            filme.hidden = !(correspondeStatus && correspondePesquisa);
+        });
+    }
 
     botoes.forEach((botao) => {
         botao.addEventListener("click", () => {
-            const filtro = botao.dataset.filtro;
+            filtroAtual = botao.dataset.filtro;
 
             botoes.forEach((b) => b.classList.remove("ativo"));
             botao.classList.add("ativo");
 
-            filmes.forEach((filme) => {
-                const status = filme.getAttribute("data-status");
-
-                filme.hidden = filtro !== "Todos" && status !== filtro;
-            });
+            atualizarFilmes();
         });
     });
+
+    pesquisa.addEventListener("input", atualizarFilmes);
 </script>
 
 <style>
@@ -200,6 +228,31 @@ const filmes = [
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
         gap: 2rem;
+    }
+
+    .pesquisa {
+        margin-bottom: 2rem;
+    }
+
+    .pesquisa input {
+        width: 100%;
+        max-width: 400px;
+        padding: 10px 12px;
+        background: transparent;
+        border: 1px solid var(--border-color, #8884);
+        border-radius: 5px;
+        color: inherit;
+        font: inherit;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .pesquisa input:focus {
+        border-color: #718b75;
+    }
+
+    .pesquisa input::placeholder {
+        opacity: 0.5;
     }
 
     .informacoes h3 {

@@ -501,6 +501,15 @@ const categorias = ["Todos", "Lidos", "Lendo", "Quero ler"];
             <button data-filtro="Quero ler">Quero ler</button>
         </nav>
 
+        <div class="pesquisa">
+            <input
+                type="search"
+                id="pesquisar-livros"
+                placeholder="Pesquisar livros ou autores..."
+                aria-label="Pesquisar livros ou autores"
+            />
+        </div>
+
         <section class="estante">
             <h2>Minha estante</h2>
 
@@ -549,23 +558,41 @@ const categorias = ["Todos", "Lidos", "Lendo", "Quero ler"];
 <script>
     const botoes = document.querySelectorAll(".categorias button");
     const livros = document.querySelectorAll(".livro");
+    const pesquisa = document.querySelector("#pesquisar-livros");
+
+    let filtroAtual = "Todos";
+
+    function atualizarLivros() {
+        const termo = pesquisa.value.toLowerCase().trim();
+
+        livros.forEach((livro) => {
+            const status = livro.getAttribute("data-status");
+            const titulo = livro.querySelector("h3").textContent.toLowerCase();
+            const autor = livro.querySelector("p").textContent.toLowerCase();
+
+            const correspondeStatus =
+                filtroAtual === "Todos" || status === filtroAtual;
+
+            const correspondePesquisa =
+                titulo.includes(termo) || autor.includes(termo);
+
+            livro.hidden = !(correspondeStatus && correspondePesquisa);
+        });
+    }
 
     botoes.forEach((botao) => {
         botao.addEventListener("click", () => {
-            const filtro = botao.dataset.filtro;
+            filtroAtual = botao.dataset.filtro;
 
             botoes.forEach((b) => b.classList.remove("ativo"));
             botao.classList.add("ativo");
 
-            livros.forEach((livro) => {
-                const status = livro.getAttribute("data-status");
-
-                livro.hidden = filtro !== "Todos" && status !== filtro;
-            });
+            atualizarLivros();
         });
     });
-</script>
 
+    pesquisa.addEventListener("input", atualizarLivros);
+</script>
 <style>
     .biblioteca {
         max-width: 100%;
@@ -605,6 +632,31 @@ const categorias = ["Todos", "Lidos", "Lendo", "Quero ler"];
 
     .categorias button.ativo {
         font-weight: bold;
+    }
+
+    .pesquisa {
+        margin-bottom: 2rem;
+    }
+
+    .pesquisa input {
+        width: 100%;
+        max-width: 400px;
+        padding: 10px 12px;
+        background: transparent;
+        border: 1px solid var(--border-color, #8884);
+        border-radius: 5px;
+        color: inherit;
+        font: inherit;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .pesquisa input:focus {
+        border-color: #718b75;
+    }
+
+    .pesquisa input::placeholder {
+        opacity: 0.5;
     }
 
     .livro[hidden] {

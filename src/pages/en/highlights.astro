@@ -65,6 +65,15 @@ const filmes = [
             <button data-filtro="Want to watch">Want to watch</button>
         </nav>
 
+        <div class="pesquisa">
+            <input
+                type="search"
+                id="pesquisar-filmes"
+                placeholder="Search films or directors..."
+                aria-label="Search films or directors"
+            />
+        </div>
+
         <section class="estante">
             <h2>My film library</h2>
 
@@ -74,7 +83,7 @@ const filmes = [
                         <div class="poster-container">
                             <img
                                 src={filme.poster}
-                                alt={`Pôster de ${filme.titulo}`}
+                                alt={`Poster of ${filme.titulo}`}
                             />
                         </div>
 
@@ -85,7 +94,7 @@ const filmes = [
                             {filme.avaliacao !== null && (
                                 <div
                                     class="avaliacao"
-                                    aria-label={`Nota: ${filme.avaliacao} de 5 estrelas`}
+                                    aria-label={`Rating: ${filme.avaliacao} out of 5 stars`}
                                 >
                                     {Array.from({ length: 5 }, (_, i) => {
                                         const valor = filme.avaliacao - i;
@@ -113,23 +122,41 @@ const filmes = [
 <script>
     const botoes = document.querySelectorAll(".categorias button");
     const filmes = document.querySelectorAll(".filme");
+    const pesquisa = document.querySelector("#pesquisar-filmes");
+
+    let filtroAtual = "All";
+
+    function atualizarFilmes() {
+        const termo = pesquisa.value.toLowerCase().trim();
+
+        filmes.forEach((filme) => {
+            const status = filme.getAttribute("data-status");
+            const titulo = filme.querySelector("h3").textContent.toLowerCase();
+            const diretor = filme.querySelector("p").textContent.toLowerCase();
+
+            const correspondeStatus =
+                filtroAtual === "All" || status === filtroAtual;
+
+            const correspondePesquisa =
+                titulo.includes(termo) || diretor.includes(termo);
+
+            filme.hidden = !(correspondeStatus && correspondePesquisa);
+        });
+    }
 
     botoes.forEach((botao) => {
         botao.addEventListener("click", () => {
-            const filtro = botao.dataset.filtro;
+            filtroAtual = botao.dataset.filtro;
 
             botoes.forEach((b) => b.classList.remove("ativo"));
             botao.classList.add("ativo");
 
-            filmes.forEach((filme) => {
-                const status = filme.getAttribute("data-status");
-
-                filme.hidden = filtro !== "Todos" && status !== filtro;
-            });
+            atualizarFilmes();
         });
     });
-</script>
 
+    pesquisa.addEventListener("input", atualizarFilmes);
+</script>
 <style>
     .filmoteca {
         max-width: 100%;
@@ -215,6 +242,31 @@ const filmes = [
         font-size: 0.95rem;
         margin: 0 0 4px;
         opacity: 0.7;
+    }
+
+    .pesquisa {
+        margin-bottom: 2rem;
+    }
+
+    .pesquisa input {
+        width: 100%;
+        max-width: 400px;
+        padding: 10px 12px;
+        background: transparent;
+        border: 1px solid var(--border-color, #8884);
+        border-radius: 5px;
+        color: inherit;
+        font: inherit;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .pesquisa input:focus {
+        border-color: #718b75;
+    }
+
+    .pesquisa input::placeholder {
+        opacity: 0.5;
     }
 
     .informacoes > span {
