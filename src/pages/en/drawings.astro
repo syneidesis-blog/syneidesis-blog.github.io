@@ -3,11 +3,39 @@ import Base from "../../layouts/Base.astro";
 
 const pinturas = [
     {
-        imagem: "/imagens/desenhos/mato.webp",
-        data: "11/19/2026",
-        titulo: "Serra da Mantiqueira (Mantiqueira Mountains)",
+        imagem: "/imagens/desenhos/n.jpeg",
+        data: "11/21/2026",
+        titulo: "Night",
         descricao:
-            "A beginner's painting depicting the landscape of the eastern region of São José dos Campos.",
+            "An illustration for the poem Night, depicting a nocturnal landscape",
+        link: "/en/article.html?categoria=poems&texto=noite",
+        textoLink: "Night",
+    },
+    {
+        imagem: "/imagens/desenhos/f.jpeg",
+        data: "11/21/2026",
+        titulo: "The Pretender",
+        descricao:
+            "An illustration for the article The Relationship Between Schiller's Aesthetic Philosophy and Samir Yazbek's Play The Pretender, depicting a portrait of Fernando Pessoa.",
+        link: "/en/article.html?categoria=articles&texto=filosofia-schiller-werle",
+        textoLink:
+            "The Relationship Between Schiller's Aesthetic Philosophy and Samir Yazbek's Play The Pretender",
+    },
+    {
+        imagem: "/imagens/desenhos/b.jpeg",
+        data: "11/19/2026",
+        titulo: "Embers",
+        descricao:
+            "An illustration for the poem Brazil, Love Me or Leave Me, depicting blood beneath the flag.",
+        link: "/en/article.html?categoria=poems&texto=brasil-ame",
+        textoLink: "Brazil, Love Me or Leave Me",
+    },
+    {
+        imagem: "/imagens/desenhos/mato.webp",
+        data: "11/21/2026",
+        titulo: "Mantiqueira Mountains",
+        descricao:
+            "A beginner's painting depicting a landscape in the eastern region of São José dos Campos.",
     },
     {
         imagem: "/imagens/desenhos/pedra.webp",
@@ -39,7 +67,27 @@ const pinturas = [
                     <div class="informacoes">
                         <p class="data">{pintura.data}</p>
                         <h2>{pintura.titulo}</h2>
-                        <p class="descricao">{pintura.descricao}</p>
+
+                        <p class="descricao">
+                            {pintura.link && pintura.textoLink ? (
+                                <>
+                                    {
+                                        pintura.descricao.split(
+                                            pintura.textoLink,
+                                        )[0]
+                                    }
+                                    <a href={pintura.link}>
+                                        {pintura.textoLink}
+                                    </a>
+                                    {pintura.descricao
+                                        .split(pintura.textoLink)
+                                        .slice(1)
+                                        .join(pintura.textoLink)}
+                                </>
+                            ) : (
+                                pintura.descricao
+                            )}
+                        </p>
                     </div>
                 </article>
             ))}

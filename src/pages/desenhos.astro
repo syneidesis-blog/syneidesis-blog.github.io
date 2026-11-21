@@ -3,6 +3,34 @@ import Base from "../layouts/Base.astro";
 
 const pinturas = [
     {
+        imagem: "/imagens/desenhos/n.jpeg",
+        data: "21/11/2026",
+        titulo: "Noite",
+        descricao:
+            "Ilustração para o poema Noite, mostrando uma paisagem noturna.",
+        link: "/artigo.html?categoria=poemas&texto=noite",
+        textoLink: "Noite",
+    },
+    {
+        imagem: "/imagens/desenhos/f.jpeg",
+        data: "21/11/2026",
+        titulo: "Fingidor",
+        descricao:
+            "Ilustração para o artigo A relação da filosofia estética de Schiller com a peça teatral O Fingidor, de Samir Yazbek, mostrando um retrato de Fernando Pessoa.",
+        link: "/artigo.html?categoria=artigos&texto=filosofia-schiller-werle",
+        textoLink:
+            "A relação da filosofia estética de Schiller com a peça teatral O Fingidor, de Samir Yazbek",
+    },
+    {
+        imagem: "/imagens/desenhos/b.jpeg",
+        data: "21/11/2026",
+        titulo: "Brasa",
+        descricao:
+            "Ilustração para o poema Brasil, ame-me ou deixe-me, mostrando o sangue sob a bandeira.",
+        link: "/artigo.html?categoria=poemas&texto=brasil-ame",
+        textoLink: "Brasil, ame-me ou deixe-me",
+    },
+    {
         imagem: "/imagens/desenhos/mato.webp",
         data: "19/11/2026",
         titulo: "Serra da Mantiqueira",
@@ -39,7 +67,27 @@ const pinturas = [
                     <div class="informacoes">
                         <p class="data">{pintura.data}</p>
                         <h2>{pintura.titulo}</h2>
-                        <p class="descricao">{pintura.descricao}</p>
+
+                        <p class="descricao">
+                            {pintura.link && pintura.textoLink ? (
+                                <>
+                                    {
+                                        pintura.descricao.split(
+                                            pintura.textoLink,
+                                        )[0]
+                                    }
+                                    <a href={pintura.link}>
+                                        {pintura.textoLink}
+                                    </a>
+                                    {pintura.descricao
+                                        .split(pintura.textoLink)
+                                        .slice(1)
+                                        .join(pintura.textoLink)}
+                                </>
+                            ) : (
+                                pintura.descricao
+                            )}
+                        </p>
                     </div>
                 </article>
             ))}
