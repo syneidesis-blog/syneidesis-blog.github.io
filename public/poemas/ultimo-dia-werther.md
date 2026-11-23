@@ -1,6 +1,6 @@
 # O último dia de Werther
 
-*<span id="tempo-leitura"></span>. 13/11/26.*
+*<span id="tempo-leitura"></span>. 11/11/26.*
 
 ---
 

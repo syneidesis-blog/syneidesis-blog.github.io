@@ -1,6 +1,7 @@
 # The last day of Werther
 
-*<span id="tempo-leitura"></span>. 11/13/26.*
+<span id="tempo-leitura"></span>. 11/11/26.
+
 ---
 
 Wretched being! What a fool you are!

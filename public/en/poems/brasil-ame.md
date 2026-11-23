@@ -1,6 +1,6 @@
 # Brasil, Love Me ou Leave Me
 
-*<span id="tempo-leitura"></span>. 9/11/26.*
+*<span id="tempo-leitura"></span>. 11/9/26.*
 
 ---
 
