@@ -26,6 +26,9 @@ const menus = {
 
 const idioma = lang === "en" ? "en" : "pt";
 
+const canonicalUrl = new URL(Astro.url.pathname, "https://syneidesis.com.br")
+    .href;
+
 const equivalencias = {
     "/": { pt: "/", en: "/en/" },
     "/artigos": { pt: "/artigos/", en: "/en/articles/" },
@@ -105,6 +108,7 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
             href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&family=UnifrakturCook:wght@700&display=swap"
             rel="stylesheet"
         />
+        <link rel="canonical" href={canonicalUrl} />
         <link
             rel="icon"
             type="image/png"
