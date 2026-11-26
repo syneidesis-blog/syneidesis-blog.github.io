@@ -813,7 +813,7 @@ body.menu-recolhido {
     }
 
     .sidebar:not(.recolhida) {
-        width: 65px;
+        width: 220px;
     }
 
     .sidebar-top {
@@ -830,8 +830,8 @@ body.menu-recolhido {
         padding: 12px 5px;
     }
 
-    .sidebar .menu-label {
-        display: none;
+    .sidebar:not(.recolhida) .menu-label {
+        display: inline;
     }
 
     body {

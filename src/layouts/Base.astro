@@ -212,12 +212,13 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
 
         <main>
             <div class="site-intro">
-                <img
-                    class="site-intro-logo"
-                    src="/imagens/title.png"
-                    alt="Syneidesis"
-                />
-
+                <a href={idioma === "en" ? "/en/" : "/"}>
+                    <img
+                        class="site-intro-logo"
+                        src="/imagens/title.png"
+                        alt="Syneidesis"
+                    />
+                </a>
                 <p>
                     {idioma === "en"
                         ? "Philosophy, art and culture"
