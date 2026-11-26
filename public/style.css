@@ -851,3 +851,165 @@ body.menu-recolhido {
         width: 100%;
     }
 }
+
+
+
+/* ===== COMENTÁRIOS ===== */
+
+#comentarios {
+    max-width: 800px;
+    margin: 50px auto 30px;
+    padding: 30px 35px;
+    border-top: 1px solid var(--linha);
+}
+
+#comentarios > h2 {
+    margin-bottom: 25px;
+    font-size: 28px;
+}
+
+#comentarios > h3 {
+    margin-top: 40px;
+    font-family: Cambria, Georgia, serif;
+    font-size: 21px;
+    font-weight: normal;
+}
+
+#lista-comentarios article {
+    margin: 18px 0;
+    padding: 18px 22px;
+    background-color: var(--fundo);
+    border-left: 3px solid var(--verde-medio);
+    border-radius: 5px;
+}
+
+#lista-comentarios h3 {
+    margin: 0 0 8px;
+    color: var(--verde-escuro);
+    font-family: Cambria, Georgia, serif;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+#lista-comentarios p {
+    margin: 0;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+    text-indent: 0;
+    text-align: left;
+}
+
+#form-comentario {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#form-comentario label {
+    margin-top: 8px;
+    color: var(--verde-escuro);
+    font-family: Cambria, Georgia, serif;
+}
+
+#form-comentario input,
+#form-comentario textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--linha);
+    border-radius: 5px;
+    background-color: var(--fundo);
+    color: var(--verde-escuro);
+    font: inherit;
+}
+
+#form-comentario textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+#form-comentario input:focus,
+#form-comentario textarea:focus {
+    outline: 2px solid var(--verde-suave);
+    outline-offset: 2px;
+}
+
+#form-comentario button {
+    align-self: flex-start;
+    margin-top: 10px;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--verde-escuro);
+    color: var(--texto-claro);
+    font-family: Cambria, Georgia, serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#form-comentario button:hover {
+    background-color: var(--verde-medio);
+}
+
+#status-comentarios {
+    margin-top: 15px;
+    font-size: 14px;
+    text-indent: 0;
+}
+
+@media (max-width: 768px) {
+    #comentarios {
+        margin-top: 35px;
+        padding: 25px 10px;
+    }
+
+    #comentarios > h2 {
+        font-size: 25px;
+    }
+
+    .acoes-comentario {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        text-align: left;
+    }
+
+    .acoes-comentario > button {
+        display: block;
+        align-self: flex-start;
+        margin: 8px 0 0;
+    }
+    .comentario-publico > button {
+        display: block;
+        width: fit-content;
+        margin: 8px 0 0 0;
+        float: none;
+        text-align: left;
+    }
+
+    #form-comentario button {
+        width: 100%;
+    }
+}
+
+/* ===== AÇÕES DOS COMENTÁRIOS ===== */
+
+.acoes-comentario {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.acoes-comentario > button {
+    display: block !important;
+    position: static !important;
+    align-self: flex-start;
+    width: auto;
+    margin: 8px 0 0;
+    padding: 4px 0;
+    float: none !important;
+    text-align: left;
+}

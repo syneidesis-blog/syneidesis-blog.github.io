@@ -5,20 +5,402 @@ import Base from "../layouts/Base.astro";
 <Base title="Artigo | Syneidesis">
     <article id="conteudo-artigo"></article>
 
-    <script is:inline src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <section id="comentarios">
+        <h2>Comentários</h2>
+
+        <div id="lista-comentarios">Carregando comentários...</div>
+
+        <h3>Deixe seu comentário</h3>
+
+        <form id="form-comentario">
+            <label for="nome-comentario">Nome</label>
+            <input id="nome-comentario" type="text" maxlength="60" required />
+
+            <label for="texto-comentario">Comentário</label>
+            <textarea
+                id="texto-comentario"
+                maxlength="3000"
+                required
+            ></textarea>
+
+            <button type="submit">Enviar comentário</button>
+        </form>
+
+        <p id="status-comentarios" role="status"></p>
+    </section>
+
+    <script
+        is:inline
+        src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"
+    ></script>
     <script is:inline src="/js/markdown.js"></script>
+
     <script is:inline>
+        const API = "https://syneidesis-api.adham-limao.workers.dev";
+
         const parametros = new URLSearchParams(window.location.search);
         const categoria = parametros.get("categoria");
         const texto = parametros.get("texto");
         const categorias = ["artigos", "poemas"];
         const slugValido = texto && /^[a-z0-9-]+$/.test(texto);
 
+        const formulario = document.querySelector("#form-comentario");
+        const lista = document.querySelector("#lista-comentarios");
+        const status = document.querySelector("#status-comentarios");
+
         if (categorias.includes(categoria) && slugValido) {
             carregarArtigo(`/${categoria}/${texto}.md`);
+
+            const post = `${categoria}/${texto}`;
+
+            async function carregarComentarios() {
+                try {
+                    const resposta = await fetch(
+                        `${API}/comments?post=${encodeURIComponent(post)}`,
+                    );
+
+                    if (!resposta.ok) {
+                        throw new Error();
+                    }
+
+                    const dados = await resposta.json();
+                    lista.replaceChildren();
+
+                    if (dados.comments.length === 0) {
+                        lista.textContent = "Ainda não há comentários.";
+                        return;
+                    }
+
+                    // Organizar os comentários em uma árvore.
+                    const comentariosPorId = new Map();
+
+                    dados.comments.forEach((comentario) => {
+                        comentariosPorId.set(comentario.id, {
+                            ...comentario,
+                            respostas: [],
+                        });
+                    });
+
+                    const comentariosPrincipais = [];
+
+                    comentariosPorId.forEach((comentario) => {
+                        const pai = comentariosPorId.get(comentario.parent_id);
+
+                        if (pai) {
+                            pai.respostas.push(comentario);
+                        } else {
+                            comentariosPrincipais.push(comentario);
+                        }
+                    });
+
+                    // Criar visualmente cada comentário e suas respostas.
+                    function criarComentario(comentario) {
+                        const artigo = document.createElement("article");
+                        artigo.className = "comentario-publico";
+
+                        const nome = document.createElement("h3");
+                        nome.textContent = comentario.author_name;
+
+                        const conteudo = document.createElement("p");
+                        conteudo.textContent = comentario.content;
+
+                        const data = document.createElement("small");
+
+                        const dataComentario = new Date(
+                            comentario.created_at.replace(" ", "T") + "Z",
+                        );
+
+                        data.textContent =
+                            dataComentario.toLocaleDateString("pt-BR");
+
+                        const botaoResponder = document.createElement("button");
+                        botaoResponder.type = "button";
+                        botaoResponder.textContent = "Responder";
+
+                        const areaResposta = document.createElement("div");
+                        areaResposta.hidden = true;
+
+                        botaoResponder.addEventListener("click", () => {
+                            areaResposta.hidden = !areaResposta.hidden;
+                        });
+
+                        const formularioResposta =
+                            document.createElement("form");
+
+                        formularioResposta.className = "form-resposta";
+
+                        const campoNome = document.createElement("input");
+                        campoNome.type = "text";
+                        campoNome.maxLength = 60;
+                        campoNome.placeholder = "Seu nome";
+                        campoNome.required = true;
+
+                        const campoTexto = document.createElement("textarea");
+
+                        campoTexto.maxLength = 3000;
+                        campoTexto.placeholder = "Escreva sua resposta...";
+                        campoTexto.required = true;
+
+                        const enviar = document.createElement("button");
+                        enviar.type = "submit";
+                        enviar.textContent = "Enviar resposta";
+
+                        formularioResposta.append(
+                            campoNome,
+                            campoTexto,
+                            enviar,
+                        );
+
+                        formularioResposta.addEventListener(
+                            "submit",
+                            async (evento) => {
+                                evento.preventDefault();
+
+                                enviar.disabled = true;
+                                status.textContent = "Enviando resposta...";
+
+                                try {
+                                    const resposta = await fetch(
+                                        `${API}/comments`,
+                                        {
+                                            method: "POST",
+                                            headers: {
+                                                "Content-Type":
+                                                    "application/json",
+                                            },
+                                            body: JSON.stringify({
+                                                post,
+                                                name: campoNome.value,
+                                                content: campoTexto.value,
+                                                parent_id: comentario.id,
+                                            }),
+                                        },
+                                    );
+
+                                    const dados = await resposta.json();
+
+                                    if (!resposta.ok) {
+                                        throw new Error(
+                                            dados.error ||
+                                                "Erro ao enviar resposta.",
+                                        );
+                                    }
+
+                                    formularioResposta.reset();
+                                    areaResposta.hidden = true;
+
+                                    status.textContent =
+                                        "Resposta enviada! Ela aparecerá após a aprovação.";
+                                } catch (erro) {
+                                    status.textContent = erro.message;
+                                } finally {
+                                    enviar.disabled = false;
+                                }
+                            },
+                        );
+
+                        areaResposta.append(formularioResposta);
+
+                        const acoesComentario = document.createElement("div");
+                        acoesComentario.className = "acoes-comentario";
+
+                        acoesComentario.append(
+                            data,
+                            botaoResponder,
+                            areaResposta,
+                        );
+
+                        artigo.append(nome, conteudo, acoesComentario);
+
+                        // Criar recursivamente as respostas.
+                        if (comentario.respostas.length > 0) {
+                            const respostas = document.createElement("div");
+
+                            respostas.className = "respostas-comentario";
+
+                            comentario.respostas.forEach((resposta) => {
+                                respostas.append(criarComentario(resposta));
+                            });
+
+                            artigo.append(respostas);
+                        }
+
+                        return artigo;
+                    }
+
+                    comentariosPrincipais.forEach((comentario) => {
+                        lista.append(criarComentario(comentario));
+                    });
+                } catch {
+                    lista.textContent =
+                        "Não foi possível carregar os comentários.";
+                }
+            }
+
+            formulario.addEventListener("submit", async (evento) => {
+                evento.preventDefault();
+
+                const nome = document.querySelector("#nome-comentario").value;
+                const conteudo =
+                    document.querySelector("#texto-comentario").value;
+
+                status.textContent = "Enviando comentário...";
+
+                try {
+                    const resposta = await fetch(`${API}/comments`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            post,
+                            name: nome,
+                            content: conteudo,
+                        }),
+                    });
+
+                    const dados = await resposta.json();
+
+                    if (!resposta.ok) {
+                        throw new Error(
+                            dados.error || "Erro ao enviar comentário.",
+                        );
+                    }
+
+                    formulario.reset();
+                    status.textContent =
+                        "Comentário enviado! Ele aparecerá após a aprovação.";
+                } catch (erro) {
+                    status.textContent = erro.message;
+                }
+            });
+
+            carregarComentarios();
         } else {
             document.querySelector("#conteudo-artigo").textContent =
                 "Artigo não encontrado.";
+
+            document.querySelector("#comentarios").hidden = true;
         }
     </script>
+
+    <style>
+        #comentarios {
+            max-width: 800px;
+            margin: 50px auto;
+        }
+
+        .comentario-publico {
+            margin: 20px 0;
+            padding: 16px;
+            border: 1px solid var(--verde-suave);
+            border-left: 4px solid var(--verde-medio);
+            border-radius: 8px;
+            overflow-wrap: anywhere;
+        }
+
+        .comentario-publico h3 {
+            margin-top: 0;
+        }
+
+        .comentario-publico p {
+            white-space: pre-wrap;
+        }
+
+        .comentario-publico small {
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .respostas-comentario {
+            margin: 18px 0 0 20px;
+            padding-left: 14px;
+            border-left: 2px solid var(--verde-suave);
+        }
+
+        .form-resposta {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        #comentarios input,
+        #comentarios textarea,
+        #comentarios button {
+            padding: 10px;
+            font: inherit;
+        }
+
+        #comentarios textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        #comentarios button {
+            cursor: pointer;
+        }
+
+        #form-comentario {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #comentarios button {
+            font-family: inherit;
+            cursor: pointer;
+            transition:
+                background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+        .comentario-publico > button {
+            padding: 7px 15px;
+            margin-top: 4px;
+            color: var(--verde-escuro);
+            background: transparent;
+            border: 1px solid var(--verde-suave);
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .comentario-publico > button {
+            padding: 4px 0;
+            margin-top: 4px;
+            color: var(--verde-medio);
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--verde-suave);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 0.95rem;
+            font-style: italic;
+            letter-spacing: 0.3px;
+            transition:
+                color 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+        .comentario-publico > button:hover {
+            color: var(--verde-escuro);
+            border-color: var(--verde-escuro);
+        }
+
+        .form-resposta button,
+        #form-comentario button {
+            align-self: flex-start;
+            padding: 10px 18px;
+            color: var(--texto-claro);
+            background: var(--verde-escuro);
+            border: 1px solid var(--verde-escuro);
+            border-radius: 6px;
+        }
+
+        .form-resposta button:hover,
+        #form-comentario button:hover {
+            background: var(--verde-medio);
+            border-color: var(--verde-medio);
+        }
+    </style>
 </Base>

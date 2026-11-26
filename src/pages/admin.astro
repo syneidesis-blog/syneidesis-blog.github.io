@@ -1,0 +1,307 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Administração | Syneidesis">
+    <section class="admin">
+        <h1>Administração</h1>
+        <p>Moderação dos comentários do Syneidesis.</p>
+
+        <form id="admin-login">
+            <label for="admin-password">Senha administrativa</label>
+            <input
+                id="admin-password"
+                type="password"
+                placeholder="Digite sua senha"
+                required
+            />
+            <button type="submit">Entrar</button>
+        </form>
+
+        <div id="admin-status" role="status"></div>
+
+        <button id="admin-view-approved" type="button" hidden>
+            Ver comentários aprovados
+        </button>
+
+        <div id="admin-comments"></div>
+
+        <button id="admin-logout" type="button" hidden>
+            Sair
+        </button>
+    </section>
+</Base>
+
+<style>
+    .admin {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 24px;
+    }
+
+    .admin form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-width: 400px;
+        margin: 30px 0;
+    }
+
+    .admin input,
+    .admin textarea,
+    .admin button {
+        padding: 12px;
+        font: inherit;
+    }
+
+    .admin textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .admin button {
+        cursor: pointer;
+    }
+
+    .comentario-admin {
+        border: 1px solid var(--verde-suave);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+
+    .comentario-admin p {
+        overflow-wrap: anywhere;
+    }
+
+    .acoes-admin {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+</style>
+
+<script>
+    const API = "https://syneidesis-api.adham-limao.workers.dev";
+
+    const form = document.querySelector("#admin-login");
+    const senhaInput = document.querySelector("#admin-password");
+    const status = document.querySelector("#admin-status");
+    const lista = document.querySelector("#admin-comments");
+    const botaoSair = document.querySelector("#admin-logout");
+    const botaoAprovados = document.querySelector("#admin-view-approved");
+
+    let senhaAdmin = "";
+    let mostrandoAprovados = false;
+
+    async function carregarComentarios(aprovados = false) {
+        status.textContent = "Carregando comentários...";
+        lista.replaceChildren();
+
+        try {
+            const rota = aprovados
+                ? `${API}/admin/comments?status=approved`
+                : `${API}/admin/comments`;
+
+            const resposta = await fetch(rota, {
+                headers: {
+                    Authorization: `Bearer ${senhaAdmin}`,
+                },
+            });
+
+            if (resposta.status === 401) {
+                throw new Error("Senha incorreta ou acesso não autorizado.");
+            }
+
+            if (!resposta.ok) {
+                throw new Error("Não foi possível carregar os comentários.");
+            }
+
+            const dados = await resposta.json();
+
+            if (dados.comments.length === 0) {
+                status.textContent = aprovados
+                    ? "Não há comentários aprovados."
+                    : "Não há comentários pendentes.";
+                return;
+            }
+
+            status.textContent = aprovados
+                ? `${dados.comments.length} comentário(s) aprovado(s).`
+                : `${dados.comments.length} comentário(s) aguardando moderação.`;
+
+            dados.comments.forEach((comentario) => {
+                const card = document.createElement("article");
+                card.className = "comentario-admin";
+
+                const titulo = document.createElement("h2");
+                titulo.textContent = comentario.author_name;
+
+                const identificacao = document.createElement("small");
+                identificacao.textContent = `Post: ${comentario.post_slug} | ID: ${comentario.id}`;
+
+                const conteudo = document.createElement("p");
+                conteudo.textContent = comentario.content;
+
+                const data = document.createElement("small");
+                data.textContent = comentario.created_at;
+
+                card.append(titulo, identificacao, conteudo, data);
+
+                if (aprovados) {
+                    const formularioResposta = document.createElement("form");
+                    const campoResposta = document.createElement("textarea");
+                    const enviarResposta = document.createElement("button");
+
+                    campoResposta.placeholder = "Escreva sua resposta...";
+                    campoResposta.maxLength = 3000;
+                    campoResposta.required = true;
+
+                    enviarResposta.textContent = "Responder";
+
+                    formularioResposta.append(campoResposta, enviarResposta);
+
+                    formularioResposta.addEventListener(
+                        "submit",
+                        async (evento) => {
+                            evento.preventDefault();
+
+                            enviarResposta.disabled = true;
+                            status.textContent = "Enviando resposta...";
+
+                            try {
+                                const resposta = await fetch(
+                                    `${API}/admin/comments`,
+                                    {
+                                        method: "POST",
+                                        headers: {
+                                            Authorization: `Bearer ${senhaAdmin}`,
+                                            "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify({
+                                            post: comentario.post_slug,
+                                            content: campoResposta.value,
+                                            parent_id: comentario.id,
+                                        }),
+                                    },
+                                );
+
+                                const dados = await resposta.json();
+
+                                if (!resposta.ok) {
+                                    throw new Error(
+                                        dados.error ||
+                                            "Erro ao enviar resposta.",
+                                    );
+                                }
+
+                                status.textContent = dados.message;
+                                campoResposta.value = "";
+                            } catch (erro) {
+                                status.textContent = erro.message;
+                            } finally {
+                                enviarResposta.disabled = false;
+                            }
+                        },
+                    );
+
+                    card.append(formularioResposta);
+                } else {
+                    const acoes = document.createElement("div");
+                    acoes.className = "acoes-admin";
+
+                    const aprovar = document.createElement("button");
+                    aprovar.textContent = "Aprovar";
+
+                    const excluir = document.createElement("button");
+                    excluir.textContent = "Excluir";
+
+                    aprovar.addEventListener("click", () => {
+                        moderarComentario(comentario.id, "approve");
+                    });
+
+                    excluir.addEventListener("click", () => {
+                        if (
+                            confirm(
+                                "Deseja excluir definitivamente este comentário?",
+                            )
+                        ) {
+                            moderarComentario(comentario.id, "reject");
+                        }
+                    });
+
+                    acoes.append(aprovar, excluir);
+                    card.append(acoes);
+                }
+
+                lista.append(card);
+            });
+        } catch (erro) {
+            status.textContent = erro.message;
+            senhaAdmin = "";
+            botaoSair.hidden = true;
+            botaoAprovados.hidden = true;
+        }
+    }
+
+    async function moderarComentario(id, action) {
+        try {
+            const resposta = await fetch(`${API}/admin/comments/${id}`, {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Bearer ${senhaAdmin}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ action }),
+            });
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(dados.error || "Erro ao moderar comentário.");
+            }
+
+            await carregarComentarios();
+        } catch (erro) {
+            status.textContent = erro.message;
+        }
+    }
+
+    form.addEventListener("submit", async (evento) => {
+        evento.preventDefault();
+
+        senhaAdmin = senhaInput.value;
+        senhaInput.value = "";
+
+        await carregarComentarios();
+
+        if (senhaAdmin) {
+            botaoSair.hidden = false;
+            botaoAprovados.hidden = false;
+        }
+    });
+
+    botaoAprovados.addEventListener("click", async () => {
+        mostrandoAprovados = !mostrandoAprovados;
+
+        botaoAprovados.textContent = mostrandoAprovados
+            ? "Ver comentários pendentes"
+            : "Ver comentários aprovados";
+
+        await carregarComentarios(mostrandoAprovados);
+    });
+
+    botaoSair.addEventListener("click", () => {
+        senhaAdmin = "";
+        mostrandoAprovados = false;
+
+        lista.replaceChildren();
+
+        status.textContent = "Você saiu da administração.";
+
+        botaoSair.hidden = true;
+        botaoAprovados.hidden = true;
+
+        botaoAprovados.textContent = "Ver comentários aprovados";
+    });
+</script>
