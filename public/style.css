@@ -784,3 +784,59 @@ body.menu-recolhido {
 .sidebar .menu > a[aria-current="page"] .menu-icon {
     color: var(--linha);
 }
+
+
+/* ===== AJUSTES PARA CELULARES ===== */
+
+@media (max-width: 768px) {
+    .sidebar {
+        top: 10px;
+        left: 10px;
+        bottom: 10px;
+        width: 65px;
+        padding: 15px 6px;
+    }
+
+    .sidebar.recolhida {
+        width: 65px;
+    }
+
+    .sidebar:not(.recolhida) {
+        width: 65px;
+    }
+
+    .sidebar-top {
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .sidebar #tituloimg {
+        display: none;
+    }
+
+    .sidebar .menu > a {
+        justify-content: center;
+        padding: 12px 5px;
+    }
+
+    .sidebar .menu-label {
+        display: none;
+    }
+
+    body {
+        padding-left: 85px;
+    }
+
+    body.menu-recolhido {
+        padding-left: 85px;
+    }
+
+    main {
+        width: 100%;
+        padding: 20px 12px 40px;
+    }
+
+    footer {
+        width: 100%;
+    }
+}
