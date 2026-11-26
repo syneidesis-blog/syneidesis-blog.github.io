@@ -486,11 +486,22 @@ footer {
     margin-bottom: 25px;
 }
 
-.menu-icon img {
+.menu-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 22px;
     width: 22px;
     height: 22px;
-    object-fit: contain;
+}
+
+.menu-icon img {
     display: block;
+    width: 22px;
+    height: 22px;
+    max-width: 22px;
+    max-height: 22px;
+    object-fit: contain;
 }
 
 .sidebar #tituloimg {
