@@ -3,62 +3,16 @@ import Base from "../layouts/Base.astro";
 
 const pinturas = [
     {
-        imagem: "/imagens/desenhos/cw.jpeg",
-        data: "23/11/2026",
-        titulo: "Carta ao Wilhelm",
-        descricao:
-            "Ilustração para o poema Os prazeres do jovem Werther, mostrando Werther escrevendo carta para seu fiel amigo Wilhelm.",
-        link: "/artigo.html?categoria=poemas&texto=prazeres",
-        textoLink: "Os prazeres do jovem Werther",
-    },
-    {
-        imagem: "/imagens/desenhos/n.jpeg",
-        data: "21/11/2026",
-        titulo: "Noite",
-        descricao:
-            "Ilustração para o poema Noite, mostrando uma paisagem noturna.",
-        link: "/artigo.html?categoria=poemas&texto=noite",
-        textoLink: "Noite",
-    },
-    {
-        imagem: "/imagens/desenhos/f.jpeg",
-        data: "21/11/2026",
-        titulo: "Fingidor",
-        descricao:
-            "Ilustração para o artigo A relação da filosofia estética de Schiller com a peça teatral O Fingidor, de Samir Yazbek, mostrando um retrato de Fernando Pessoa.",
-        link: "/artigo.html?categoria=artigos&texto=filosofia-schiller-werle",
-        textoLink:
-            "A relação da filosofia estética de Schiller com a peça teatral O Fingidor, de Samir Yazbek",
-    },
-    {
-        imagem: "/imagens/desenhos/b.jpeg",
-        data: "21/11/2026",
-        titulo: "Brasa",
-        descricao:
-            "Ilustração para o poema Brasil, ame-me ou deixe-me, mostrando o sangue sob a bandeira.",
-        link: "/artigo.html?categoria=poemas&texto=brasil-ame",
-        textoLink: "Brasil, ame-me ou deixe-me",
-    },
-    {
-        imagem: "/imagens/desenhos/mato.webp",
-        data: "19/11/2026",
-        titulo: "Serra da Mantiqueira",
-        descricao:
-            "Uma pintura iniciante que retrata a paisagem da zona leste de São José dos Campos.",
-    },
-    {
-        imagem: "/imagens/desenhos/pedra.webp",
-        data: "?/?/2025",
-        titulo: "Ponte",
-        descricao:
-            "Pintura feita em um aula artística, é uma releitura de um obra europeia que, infelizmente, não me recordo.",
+        imagem: "/imagens/desenhos/foto1.jpeg",
+        data: "17/11/2026",
+        titulo: "Paisagem da FATEC",
     },
 ];
 ---
 
-<Base title="Desenhos | Syneidesis">
+<Base title="Álbum | Syneidesis">
     <section class="galeria">
-        <h1>Desenhos e pinturas</h1>
+        <h1>Minhas fotografias</h1>
 
         <div class="pinturas">
             {pinturas.map((pintura) => (
