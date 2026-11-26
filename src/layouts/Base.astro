@@ -1,6 +1,18 @@
 ---
 const { title = "Syneidesis", lang = "pt" } = Astro.props;
 
+const iconesMenu = [
+    "home.png",
+    "file.png",
+    "writing.png",
+    "art.png",
+    "video.png",
+    "camera-roll.png",
+    "book.png",
+    "info.png",
+    "mail.png",
+];
+
 const menus = {
     pt: [
         ["Início", "/"],
@@ -36,6 +48,7 @@ const equivalencias = {
     "/artigos": { pt: "/artigos/", en: "/en/articles/" },
     "/poemas": { pt: "/poemas/", en: "/en/poems/" },
     "/desenhos": { pt: "/desenhos/", en: "/en/drawings/" },
+    "/fotos": { pt: "/fotos/", en: "/en/photos/" },
     "/destaques": { pt: "/destaques/", en: "/en/highlights/" },
     "/leituras": { pt: "/leituras/", en: "/en/readings/" },
     "/sobre": { pt: "/sobre/", en: "/en/about/" },
@@ -51,6 +64,7 @@ const equivalencias = {
     "/en/articles": { pt: "/artigos/", en: "/en/articles/" },
     "/en/poems": { pt: "/poemas/", en: "/en/poems/" },
     "/en/drawings": { pt: "/desenhos/", en: "/en/drawings/" },
+    "/en/photos": { pt: "/fotos/", en: "/en/photos/" },
     "/en/highlights": { pt: "/destaques/", en: "/en/highlights/" },
     "/en/readings": { pt: "/leituras/", en: "/en/readings/" },
     "/en/about": { pt: "/sobre/", en: "/en/about/" },
@@ -72,6 +86,13 @@ const rotas = equivalencias[caminhoAtual] || {
 
 const caminhoPT = rotas.pt;
 const caminhoEN = rotas.en;
+
+const rotaAtiva =
+    caminhoAtual === "/artigo.html"
+        ? "/artigos"
+        : caminhoAtual === "/en/article.html"
+          ? "/en/articles"
+          : caminhoAtual;
 
 const parametros = new URLSearchParams(Astro.url.search);
 
@@ -119,8 +140,8 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
     </head>
 
     <body>
-        <header>
-            <picture>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-top">
                 <a href={idioma === "en" ? "/en/" : "/"}>
                     <img
                         id="tituloimg"
@@ -128,33 +149,84 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
                         alt="Syneidesis"
                     />
                 </a>
-            </picture>
 
-            <nav class="menu">
-                {menus[idioma].map(([label, url]) => (
-                    <a href={url}>{label}</a>
-                ))}
+                <button
+                    class="sidebar-toggle"
+                    id="sidebar-toggle"
+                    type="button"
+                    aria-label="Recolher ou expandir menu"
+                    aria-expanded="true"
+                >
+                    ☰
+                </button>
+            </div>
+
+            <nav class="menu" aria-label="Navegação principal">
+                {menus[idioma].map(([label, url], index) => {
+                    const caminhoMenu =
+                        new URL(url, Astro.url).pathname.replace(/\/+$/, "") ||
+                        "/";
+
+                    const paginaAtiva = caminhoMenu === rotaAtiva;
+
+                    return (
+                        <a
+                            href={url}
+                            aria-current={paginaAtiva ? "page" : undefined}
+                        >
+                            <span class="menu-icon" aria-hidden="true">
+                                <img
+                                    src={`/imagens/${iconesMenu[index]}`}
+                                    alt=""
+                                />
+                            </span>
+                            <span class="menu-label">{label}</span>
+                        </a>
+                    );
+                })}
             </nav>
 
-            <nav class="idiomas" aria-label="Language selection">
+            <div class="sidebar-bottom">
                 <a
                     id="idioma-pt"
                     href={`${caminhoPT}${busca}`}
+                    aria-label="Português"
                     aria-current={idioma === "pt" ? "page" : undefined}
                 >
-                    PT-BR
+                    <img src="/imagens/brazil-flag-icon.webp" alt="Português" />
                 </a>
+
                 <a
                     id="idioma-en"
                     href={`${caminhoEN}${busca}`}
+                    aria-label="English"
                     aria-current={idioma === "en" ? "page" : undefined}
                 >
-                    EN
+                    <img
+                        src="/imagens/united-kingdom-flag-icon.png"
+                        alt="English"
+                    />
                 </a>
-            </nav>
-        </header>
+            </div>
+        </aside>
 
         <main>
+            <div class="site-intro">
+                <img
+                    class="site-intro-logo"
+                    src="/imagens/title.png"
+                    alt="Syneidesis"
+                />
+
+                <p>
+                    {idioma === "en"
+                        ? "Philosophy, art and culture"
+                        : "Filosofia, arte e cultura"}
+                </p>
+
+                <div class="site-intro-linha"></div>
+            </div>
+
             <slot />
         </main>
 
@@ -170,6 +242,7 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
                 "/artigos": { pt: "/artigos/", en: "/en/articles/" },
                 "/poemas": { pt: "/poemas/", en: "/en/poems/" },
                 "/desenhos": { pt: "/desenhos/", en: "/en/drawings/" },
+                "/fotos": { pt: "/fotos/", en: "/en/photos/" },
                 "/destaques": { pt: "/destaques/", en: "/en/highlights/" },
                 "/leituras": { pt: "/leituras/", en: "/en/readings/" },
                 "/sobre": { pt: "/sobre/", en: "/en/about/" },
@@ -185,6 +258,7 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
                 "/en/articles": { pt: "/artigos/", en: "/en/articles/" },
                 "/en/poems": { pt: "/poemas/", en: "/en/poems/" },
                 "/en/drawings": { pt: "/desenhos/", en: "/en/drawings/" },
+                "/en/photos": { pt: "/fotos/", en: "/en/photos/" },
                 "/en/highlights": { pt: "/destaques/", en: "/en/highlights/" },
                 "/en/readings": { pt: "/leituras/", en: "/en/readings/" },
                 "/en/about": { pt: "/sobre/", en: "/en/about/" },
@@ -199,7 +273,6 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
             };
 
             const caminho = window.location.pathname.replace(/\/+$/, "") || "/";
-
             const rotas = equivalenciasIdioma[caminho] || {
                 pt: "/",
                 en: "/en/",
@@ -225,7 +298,6 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
                 }
 
                 const busca = parametros.toString();
-
                 return destino + (busca ? "?" + busca : "");
             }
 
@@ -246,6 +318,29 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
                     evento.preventDefault();
                 });
             }
+
+            // Controle da sidebar.
+            const sidebar = document.querySelector("#sidebar");
+            const toggle = document.querySelector("#sidebar-toggle");
+
+            const menuRecolhido =
+                localStorage.getItem("menuRecolhido") === "true";
+
+            if (menuRecolhido) {
+                sidebar.classList.add("recolhida");
+                document.body.classList.add("menu-recolhido");
+                toggle.setAttribute("aria-expanded", "false");
+            }
+
+            toggle.addEventListener("click", () => {
+                const recolhida = sidebar.classList.toggle("recolhida");
+
+                document.body.classList.toggle("menu-recolhido", recolhida);
+
+                localStorage.setItem("menuRecolhido", recolhida);
+
+                toggle.setAttribute("aria-expanded", String(!recolhida));
+            });
         </script>
     </body>
 </html>
