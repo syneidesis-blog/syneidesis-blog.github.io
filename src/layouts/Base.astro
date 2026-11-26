@@ -124,6 +124,13 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
         />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{title}</title>
+        <script is:inline>
+            if (localStorage.getItem("menuRecolhido") === "true") {
+                document.documentElement.classList.add(
+                    "menu-inicial-recolhido",
+                );
+            }
+        </script>
         <link rel="stylesheet" href="/style.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -332,6 +339,7 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
                 document.body.classList.add("menu-recolhido");
                 toggle.setAttribute("aria-expanded", "false");
             }
+            document.documentElement.classList.remove("menu-inicial-recolhido");
 
             toggle.addEventListener("click", () => {
                 const recolhida = sidebar.classList.toggle("recolhida");

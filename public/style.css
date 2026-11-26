@@ -13,6 +13,53 @@
     --linha: #A9C5C0;
 }
 
+/* ===== ESTADO INICIAL DO MENU ===== */
+
+html.menu-inicial-recolhido .sidebar {
+    width: 75px;
+}
+
+html.menu-inicial-recolhido .sidebar-top {
+    flex-direction: column;
+}
+
+html.menu-inicial-recolhido #tituloimg {
+    display: none;
+}
+
+html.menu-inicial-recolhido .menu > a {
+    justify-content: center;
+    padding: 14px 5px;
+}
+
+html.menu-inicial-recolhido .menu-label {
+    display: none;
+}
+
+html.menu-inicial-recolhido #idioma-pt {
+    left: calc(50% - 25px);
+    top: 0;
+}
+
+html.menu-inicial-recolhido #idioma-en {
+    left: calc(50% - 25px);
+    top: 60px;
+}
+
+html.menu-inicial-recolhido body {
+    padding-left: 105px;
+}
+
+@media (max-width: 768px) {
+    html.menu-inicial-recolhido .sidebar {
+        width: 65px;
+    }
+
+    html.menu-inicial-recolhido body {
+        padding-left: 85px;
+    }
+}
+
 * {
     box-sizing: border-box;
 }
