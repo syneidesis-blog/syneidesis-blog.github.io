@@ -36,7 +36,7 @@ import Base from "../../layouts/Base.astro";
     <script is:inline src="/js/markdown.js"></script>
 
     <script is:inline>
-        const API = "https://syneidesis-api.adham-limao.workers.dev";
+        const API = "https://api.syneidesis.com.br";
 
         const parametros = new URLSearchParams(window.location.search);
         const categoria = parametros.get("categoria");
@@ -47,6 +47,31 @@ import Base from "../../layouts/Base.astro";
         const formulario = document.querySelector("#form-comentario");
         const lista = document.querySelector("#lista-comentarios");
         const status = document.querySelector("#status-comentarios");
+        let usuarioAutenticado = null;
+
+        async function verificarSessao() {
+            try {
+                const resposta = await fetch(`${API}/api/auth/get-session`, {
+                    credentials: "include",
+                });
+
+                const sessao = await resposta.json();
+
+                if (sessao?.user) {
+                    usuarioAutenticado =
+                        sessao.user.username || sessao.user.name;
+                    const campoNome =
+                        document.querySelector("#nome-comentario");
+
+                    campoNome.value = usuarioAutenticado;
+                    campoNome.readOnly = true;
+                }
+            } catch {
+                usuarioAutenticado = null;
+            }
+        }
+
+        verificarSessao();
 
         if (categorias.includes(categoria) && slugValido) {
             carregarArtigo(`/en/${categoria}/${texto}.md`);
@@ -134,6 +159,10 @@ import Base from "../../layouts/Base.astro";
                         campoNome.maxLength = 60;
                         campoNome.placeholder = "Your name";
                         campoNome.required = true;
+                        if (usuarioAutenticado) {
+                            campoNome.value = usuarioAutenticado;
+                            campoNome.readOnly = true;
+                        }
 
                         const campoTexto = document.createElement("textarea");
 
@@ -164,6 +193,7 @@ import Base from "../../layouts/Base.astro";
                                         `${API}/comments`,
                                         {
                                             method: "POST",
+                                            credentials: "include",
                                             headers: {
                                                 "Content-Type":
                                                     "application/json",
@@ -248,6 +278,7 @@ import Base from "../../layouts/Base.astro";
                 try {
                     const resposta = await fetch(`${API}/comments`, {
                         method: "POST",
+                        credentials: "include",
                         headers: {
                             "Content-Type": "application/json",
                         },
