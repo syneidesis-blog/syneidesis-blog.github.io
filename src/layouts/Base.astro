@@ -11,6 +11,7 @@ const iconesMenu = [
     "book.png",
     "info.png",
     "mail.png",
+    "user.png",
 ];
 
 const menus = {
@@ -24,6 +25,7 @@ const menus = {
         ["Biblioteca", "/leituras/"],
         ["Sobre", "/sobre/"],
         ["Assinar", "/correspondentia/"],
+        ["Conta", "/conta/"],
     ],
     en: [
         ["Home", "/en/"],
@@ -35,6 +37,7 @@ const menus = {
         ["Library", "/en/readings/"],
         ["About", "/en/about/"],
         ["Subscribe", "/en/correspondentia/"],
+        ["Account", "/en/account/"],
     ],
 };
 
@@ -56,6 +59,10 @@ const equivalencias = {
         pt: "/correspondentia/",
         en: "/en/correspondentia/",
     },
+    "/conta": {
+        pt: "/conta/",
+        en: "/en/account/",
+    },
     "/artigo.html": {
         pt: "/artigo.html",
         en: "/en/article.html",
@@ -71,6 +78,10 @@ const equivalencias = {
     "/en/correspondentia": {
         pt: "/correspondentia/",
         en: "/en/correspondentia/",
+    },
+    "/en/account": {
+        pt: "/conta/",
+        en: "/en/account/",
     },
     "/en/article.html": {
         pt: "/artigo.html",
@@ -187,6 +198,7 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
                                     alt=""
                                 />
                             </span>
+
                             <span class="menu-label">{label}</span>
                         </a>
                     );
@@ -258,6 +270,10 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
                     pt: "/correspondentia/",
                     en: "/en/correspondentia/",
                 },
+                "/conta": {
+                    pt: "/conta/",
+                    en: "/en/account/",
+                },
                 "/artigo.html": {
                     pt: "/artigo.html",
                     en: "/en/article.html",
@@ -273,6 +289,10 @@ const busca = parametros.toString() ? `?${parametros.toString()}` : "";
                 "/en/correspondentia": {
                     pt: "/correspondentia/",
                     en: "/en/correspondentia/",
+                },
+                "/en/account": {
+                    pt: "/conta/",
+                    en: "/en/account/",
                 },
                 "/en/article.html": {
                     pt: "/artigo.html",

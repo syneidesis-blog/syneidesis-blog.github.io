@@ -1,0 +1,285 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+
+<Base title="My Account" lang="en">
+    <main>
+        <h1>My Account</h1>
+
+        <section id="sessao-ativa" hidden>
+            <h2>You are signed in</h2>
+
+            <div class="perfil-avatar">
+                <img
+                    id="avatar-atual"
+                    src=""
+                    alt="Profile picture"
+                    width="120"
+                    height="120"
+                    hidden
+                />
+                <span id="avatar-sem-foto" aria-label="Default avatar">
+                    <svg
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                    >
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8H4z" />
+                    </svg>
+                </span>
+            </div>
+
+            <p id="usuario-atual"></p>
+
+            <form id="form-avatar">
+                <label for="avatar-arquivo">Profile picture</label>
+                <input
+                    id="avatar-arquivo"
+                    name="avatar"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    required
+                />
+                <p>JPEG, PNG or WebP. Maximum size: 2 MB.</p>
+                <button type="submit">Upload picture</button>
+                <p id="avatar-status" aria-live="polite"></p>
+            </form>
+
+            <button id="botao-sair" type="button">
+                Sign out
+            </button>
+        </section>
+
+        <form id="form-cadastro" class="form-autenticacao">
+            <h2>Create an account</h2>
+
+            <label for="cadastro-nome">Display name</label>
+            <input id="cadastro-nome" name="name" type="text" required />
+
+            <label for="cadastro-usuario">Username</label>
+            <input
+                id="cadastro-usuario"
+                name="username"
+                type="text"
+                minlength="3"
+                maxlength="30"
+                required
+            />
+
+            <label for="cadastro-email">Email address</label>
+            <input id="cadastro-email" name="email" type="email" required />
+
+            <label for="cadastro-senha">Password</label>
+            <input
+                id="cadastro-senha"
+                name="password"
+                type="password"
+                minlength="8"
+                required
+            />
+
+            <button type="submit">Create account</button>
+            <p id="cadastro-status" class="auth-status" aria-live="polite"></p>
+        </form>
+
+        <form id="form-login" class="form-autenticacao">
+            <h2>Sign in</h2>
+
+            <label for="login-email">Email address</label>
+            <input id="login-email" name="email" type="email" required />
+
+            <label for="login-senha">Password</label>
+            <input id="login-senha" name="password" type="password" required />
+
+            <button type="submit">Sign in</button>
+            <p id="login-status" class="auth-status" aria-live="polite"></p>
+        </form>
+    </main>
+</Base>
+
+<style>
+    .perfil-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 1rem 0;
+        background: #c4d2d0;
+    }
+
+    .perfil-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    #avatar-sem-foto {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #avatar-sem-foto svg {
+        width: 72px;
+        height: 72px;
+        fill: #49645d;
+    }
+</style>
+
+<script>
+    import { authClient } from "../../lib/auth";
+
+    const API = "https://api.syneidesis.com.br";
+
+    const cadastro = document.querySelector("#form-cadastro");
+    const login = document.querySelector("#form-login");
+
+    const sessaoAtiva = document.querySelector("#sessao-ativa");
+    const usuarioAtual = document.querySelector("#usuario-atual");
+    const botaoSair = document.querySelector("#botao-sair");
+
+    const formAvatar = document.querySelector("#form-avatar");
+    const arquivoAvatar = document.querySelector("#avatar-arquivo");
+    const avatarAtual = document.querySelector("#avatar-atual");
+    const avatarSemFoto = document.querySelector("#avatar-sem-foto");
+    const avatarStatus = document.querySelector("#avatar-status");
+
+    async function atualizarSessao() {
+        const { data } = await authClient.getSession();
+
+        if (data?.user) {
+            sessaoAtiva.hidden = false;
+            usuarioAtual.textContent = `Hello, ${data.user.username || data.user.name}!`;
+
+            cadastro.hidden = true;
+            login.hidden = true;
+
+            if (data.user.image) {
+                avatarAtual.src = data.user.image;
+                avatarAtual.hidden = false;
+                avatarSemFoto.hidden = true;
+            } else {
+                avatarAtual.hidden = true;
+                avatarSemFoto.hidden = false;
+            }
+        } else {
+            sessaoAtiva.hidden = true;
+            cadastro.hidden = false;
+            login.hidden = false;
+        }
+
+        return data?.user || null;
+    }
+
+    atualizarSessao();
+
+    botaoSair?.addEventListener("click", async () => {
+        await authClient.signOut();
+        window.location.reload();
+    });
+
+    formAvatar?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const arquivo = arquivoAvatar.files?.[0];
+
+        if (!arquivo) {
+            avatarStatus.textContent = "Please select an image.";
+            return;
+        }
+
+        const formatos = ["image/jpeg", "image/png", "image/webp"];
+
+        if (!formatos.includes(arquivo.type)) {
+            avatarStatus.textContent = "Choose a JPEG, PNG or WebP image.";
+            return;
+        }
+
+        if (arquivo.size > 2 * 1024 * 1024) {
+            avatarStatus.textContent = "The image must be no larger than 2 MB.";
+            return;
+        }
+
+        avatarStatus.textContent = "Uploading picture...";
+
+        try {
+            const resposta = await fetch(`${API}/avatar`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": arquivo.type,
+                },
+                body: arquivo,
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(
+                    resultado.error || "Unable to upload the picture.",
+                );
+            }
+
+            avatarStatus.textContent = "Profile picture updated successfully!";
+            avatarAtual.src = resultado.image;
+            avatarAtual.hidden = false;
+            avatarSemFoto.hidden = true;
+            arquivoAvatar.value = "";
+
+            await atualizarSessao();
+        } catch (error) {
+            avatarStatus.textContent =
+                error.message || "Error uploading the picture.";
+        }
+    });
+
+    cadastro?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const form = new FormData(cadastro);
+        const status = document.querySelector("#cadastro-status");
+
+        status.textContent = "Creating account...";
+
+        const { error } = await authClient.signUp.email({
+            name: form.get("name"),
+            username: form.get("username"),
+            email: form.get("email"),
+            password: form.get("password"),
+        });
+
+        if (error) {
+            status.textContent = error.message;
+        } else {
+            status.textContent = "Successfully signed in.";
+            await atualizarSessao();
+        }
+    });
+
+    login?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const form = new FormData(login);
+        const status = document.querySelector("#login-status");
+
+        status.textContent = "Signing in...";
+
+        const { error } = await authClient.signIn.email({
+            email: form.get("email"),
+            password: form.get("password"),
+        });
+
+        if (error) {
+            status.textContent = error.message;
+        } else {
+            status.textContent = "Successfully signed in.";
+            await atualizarSessao();
+        }
+    });
+</script>

@@ -74,6 +74,18 @@
     text-indent: 0;
 }
 
+
+
+.menu-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 23px;
+}
+
+
 @media (max-width: 768px) {
     .form-autenticacao {
         padding: 20px;
