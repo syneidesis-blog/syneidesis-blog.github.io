@@ -47,6 +47,7 @@ import Base from "../layouts/Base.astro";
         const formulario = document.querySelector("#form-comentario");
         const lista = document.querySelector("#lista-comentarios");
         const status = document.querySelector("#status-comentarios");
+
         let usuarioAutenticado = null;
 
         async function verificarSessao() {
@@ -60,6 +61,7 @@ import Base from "../layouts/Base.astro";
                 if (sessao?.user) {
                     usuarioAutenticado =
                         sessao.user.username || sessao.user.name;
+
                     const campoNome =
                         document.querySelector("#nome-comentario");
 
@@ -70,8 +72,6 @@ import Base from "../layouts/Base.astro";
                 usuarioAutenticado = null;
             }
         }
-
-        verificarSessao();
 
         if (categorias.includes(categoria) && slugValido) {
             carregarArtigo(`/${categoria}/${texto}.md`);
@@ -123,8 +123,23 @@ import Base from "../layouts/Base.astro";
                         const artigo = document.createElement("article");
                         artigo.className = "comentario-publico";
 
+                        const cabecalho = document.createElement("div");
+                        cabecalho.className = "cabecalho-comentario";
+
+                        const avatar = document.createElement("img");
+                        avatar.className = "avatar-comentario";
+                        avatar.alt = `Foto de ${comentario.author_name}`;
+
+                        if (comentario.author_image) {
+                            avatar.src = comentario.author_image;
+                        } else {
+                            avatar.hidden = true;
+                        }
+
                         const nome = document.createElement("h3");
                         nome.textContent = comentario.author_name;
+
+                        cabecalho.append(avatar, nome);
 
                         const conteudo = document.createElement("p");
                         conteudo.textContent = comentario.content;
@@ -159,13 +174,13 @@ import Base from "../layouts/Base.astro";
                         campoNome.maxLength = 60;
                         campoNome.placeholder = "Seu nome";
                         campoNome.required = true;
+
                         if (usuarioAutenticado) {
                             campoNome.value = usuarioAutenticado;
                             campoNome.readOnly = true;
                         }
 
                         const campoTexto = document.createElement("textarea");
-
                         campoTexto.maxLength = 3000;
                         campoTexto.placeholder = "Escreva sua resposta...";
                         campoTexto.required = true;
@@ -240,7 +255,7 @@ import Base from "../layouts/Base.astro";
                             areaResposta,
                         );
 
-                        artigo.append(nome, conteudo, acoesComentario);
+                        artigo.append(cabecalho, conteudo, acoesComentario);
 
                         // Criar recursivamente as respostas.
                         if (comentario.respostas.length > 0) {
@@ -271,6 +286,7 @@ import Base from "../layouts/Base.astro";
                 evento.preventDefault();
 
                 const nome = document.querySelector("#nome-comentario").value;
+
                 const conteudo =
                     document.querySelector("#texto-comentario").value;
 
@@ -299,6 +315,12 @@ import Base from "../layouts/Base.astro";
                     }
 
                     formulario.reset();
+
+                    if (usuarioAutenticado) {
+                        document.querySelector("#nome-comentario").value =
+                            usuarioAutenticado;
+                    }
+
                     status.textContent =
                         "Comentário enviado! Ele aparecerá após a aprovação.";
                 } catch (erro) {
@@ -306,7 +328,12 @@ import Base from "../layouts/Base.astro";
                 }
             });
 
-            carregarComentarios();
+            async function iniciarComentarios() {
+                await verificarSessao();
+                await carregarComentarios();
+            }
+
+            iniciarComentarios();
         } else {
             document.querySelector("#conteudo-artigo").textContent =
                 "Artigo não encontrado.";
@@ -328,6 +355,26 @@ import Base from "../layouts/Base.astro";
             border-left: 4px solid var(--verde-medio);
             border-radius: 8px;
             overflow-wrap: anywhere;
+        }
+
+        .cabecalho-comentario {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .cabecalho-comentario h3 {
+            margin: 0;
+        }
+
+        .avatar-comentario {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--verde-suave);
         }
 
         .comentario-publico h3 {

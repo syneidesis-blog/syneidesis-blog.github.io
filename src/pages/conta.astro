@@ -5,9 +5,38 @@ import Base from "../layouts/Base.astro";
 <Base title="Minha conta">
     <main>
         <h1>Minha conta</h1>
+
         <section id="sessao-ativa" hidden>
             <h2>Você está conectado</h2>
+
+            <div class="perfil-avatar">
+                <img
+                    id="avatar-atual"
+                    src=""
+                    alt="Foto de perfil"
+                    width="120"
+                    height="120"
+                    hidden
+                />
+                <span id="avatar-sem-foto">Sem foto</span>
+            </div>
+
             <p id="usuario-atual"></p>
+
+            <form id="form-avatar">
+                <label for="avatar-arquivo">Foto de perfil</label>
+                <input
+                    id="avatar-arquivo"
+                    name="avatar"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    required
+                />
+                <p>JPEG, PNG ou WebP. Tamanho máximo: 2 MB.</p>
+                <button type="submit">Enviar foto</button>
+                <p id="avatar-status" aria-live="polite"></p>
+            </form>
+
             <button id="botao-sair" type="button">
                 Sair da conta
             </button>
@@ -60,8 +89,30 @@ import Base from "../layouts/Base.astro";
     </main>
 </Base>
 
+<style>
+    .perfil-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 1rem 0;
+        background: #c4d2d0;
+    }
+
+    .perfil-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+
 <script>
     import { authClient } from "../lib/auth";
+
+    const API = "https://api.syneidesis.com.br";
 
     const cadastro = document.querySelector("#form-cadastro");
     const login = document.querySelector("#form-login");
@@ -70,15 +121,37 @@ import Base from "../layouts/Base.astro";
     const usuarioAtual = document.querySelector("#usuario-atual");
     const botaoSair = document.querySelector("#botao-sair");
 
+    const formAvatar = document.querySelector("#form-avatar");
+    const arquivoAvatar = document.querySelector("#avatar-arquivo");
+    const avatarAtual = document.querySelector("#avatar-atual");
+    const avatarSemFoto = document.querySelector("#avatar-sem-foto");
+    const avatarStatus = document.querySelector("#avatar-status");
+
     async function atualizarSessao() {
         const { data } = await authClient.getSession();
 
         if (data?.user) {
             sessaoAtiva.hidden = false;
             usuarioAtual.textContent = `Olá, ${data.user.username || data.user.name}!`;
+
             cadastro.hidden = true;
             login.hidden = true;
+
+            if (data.user.image) {
+                avatarAtual.src = data.user.image;
+                avatarAtual.hidden = false;
+                avatarSemFoto.hidden = true;
+            } else {
+                avatarAtual.hidden = true;
+                avatarSemFoto.hidden = false;
+            }
+        } else {
+            sessaoAtiva.hidden = true;
+            cadastro.hidden = false;
+            login.hidden = false;
         }
+
+        return data?.user || null;
     }
 
     atualizarSessao();
@@ -86,6 +159,61 @@ import Base from "../layouts/Base.astro";
     botaoSair?.addEventListener("click", async () => {
         await authClient.signOut();
         window.location.reload();
+    });
+
+    formAvatar?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const arquivo = arquivoAvatar.files?.[0];
+
+        if (!arquivo) {
+            avatarStatus.textContent = "Selecione uma imagem.";
+            return;
+        }
+
+        const formatos = ["image/jpeg", "image/png", "image/webp"];
+
+        if (!formatos.includes(arquivo.type)) {
+            avatarStatus.textContent = "Escolha uma imagem JPEG, PNG ou WebP.";
+            return;
+        }
+
+        if (arquivo.size > 2 * 1024 * 1024) {
+            avatarStatus.textContent = "A imagem deve ter no máximo 2 MB.";
+            return;
+        }
+
+        avatarStatus.textContent = "Enviando foto...";
+
+        try {
+            const resposta = await fetch(`${API}/avatar`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": arquivo.type,
+                },
+                body: arquivo,
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(
+                    resultado.error || "Não foi possível enviar a foto.",
+                );
+            }
+
+            avatarStatus.textContent = "Foto atualizada com sucesso!";
+            avatarAtual.src = resultado.image;
+            avatarAtual.hidden = false;
+            avatarSemFoto.hidden = true;
+            arquivoAvatar.value = "";
+
+            await atualizarSessao();
+        } catch (error) {
+            avatarStatus.textContent =
+                error.message || "Erro ao enviar a foto.";
+        }
     });
 
     cadastro?.addEventListener("submit", async (event) => {
@@ -124,8 +252,11 @@ import Base from "../layouts/Base.astro";
             password: form.get("password"),
         });
 
-        status.textContent = error
-            ? error.message
-            : "Login realizado com sucesso.";
+        if (error) {
+            status.textContent = error.message;
+        } else {
+            status.textContent = "Login realizado com sucesso.";
+            await atualizarSessao();
+        }
     });
 </script>
