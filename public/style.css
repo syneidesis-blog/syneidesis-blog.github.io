@@ -13,6 +13,73 @@
     --linha: #A9C5C0;
 }
 
+/* ===== AUTENTICAÇÃO ===== */
+
+.form-autenticacao {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 450px;
+    margin: 35px auto;
+    padding: 30px;
+    background-color: var(--fundo);
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+}
+
+.form-autenticacao label {
+    color: var(--verde-escuro);
+    font-family: Cambria, Georgia, serif;
+}
+
+.form-autenticacao input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--linha);
+    border-radius: 5px;
+    background-color: white;
+    color: var(--verde-escuro);
+    font: inherit;
+}
+
+.form-autenticacao input:focus {
+    outline: 2px solid var(--verde-suave);
+    outline-offset: 2px;
+}
+
+.form-autenticacao button {
+    margin-top: 10px;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--verde-escuro);
+    color: var(--texto-claro);
+    font-family: Cambria, Georgia, serif;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.form-autenticacao button:hover {
+    background-color: var(--verde-medio);
+}
+
+.auth-link {
+    color: var(--verde-medio);
+    text-align: center;
+}
+
+.auth-status {
+    margin-top: 10px;
+    text-align: center;
+    text-indent: 0;
+}
+
+@media (max-width: 768px) {
+    .form-autenticacao {
+        padding: 20px;
+    }
+}
+
 /* ===== ESTADO INICIAL DO MENU ===== */
 
 html.menu-inicial-recolhido .sidebar {

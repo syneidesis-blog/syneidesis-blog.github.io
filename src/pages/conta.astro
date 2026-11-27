@@ -1,0 +1,131 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Minha conta">
+    <main>
+        <h1>Minha conta</h1>
+        <section id="sessao-ativa" hidden>
+            <h2>Você está conectado</h2>
+            <p id="usuario-atual"></p>
+            <button id="botao-sair" type="button">
+                Sair da conta
+            </button>
+        </section>
+
+        <form id="form-cadastro" class="form-autenticacao">
+            <h2>Criar conta</h2>
+
+            <label for="cadastro-nome">Nome de exibição</label>
+            <input id="cadastro-nome" name="name" type="text" required />
+
+            <label for="cadastro-usuario">Nome de usuário</label>
+            <input
+                id="cadastro-usuario"
+                name="username"
+                type="text"
+                minlength="3"
+                maxlength="30"
+                required
+            />
+
+            <label for="cadastro-email">E-mail</label>
+            <input id="cadastro-email" name="email" type="email" required />
+
+            <label for="cadastro-senha">Senha</label>
+            <input
+                id="cadastro-senha"
+                name="password"
+                type="password"
+                minlength="8"
+                required
+            />
+
+            <button type="submit">Cadastrar</button>
+            <p id="cadastro-status" class="auth-status" aria-live="polite"></p>
+        </form>
+
+        <form id="form-login" class="form-autenticacao">
+            <h2>Entrar</h2>
+
+            <label for="login-email">E-mail</label>
+            <input id="login-email" name="email" type="email" required />
+
+            <label for="login-senha">Senha</label>
+            <input id="login-senha" name="password" type="password" required />
+
+            <button type="submit">Entrar</button>
+            <p id="login-status" class="auth-status" aria-live="polite"></p>
+        </form>
+    </main>
+</Base>
+
+<script>
+    import { authClient } from "../lib/auth";
+
+    const cadastro = document.querySelector("#form-cadastro");
+    const login = document.querySelector("#form-login");
+
+    const sessaoAtiva = document.querySelector("#sessao-ativa");
+    const usuarioAtual = document.querySelector("#usuario-atual");
+    const botaoSair = document.querySelector("#botao-sair");
+
+    async function atualizarSessao() {
+        const { data } = await authClient.getSession();
+
+        if (data?.user) {
+            sessaoAtiva.hidden = false;
+            usuarioAtual.textContent = `Olá, ${data.user.username || data.user.name}!`;
+            cadastro.hidden = true;
+            login.hidden = true;
+        }
+    }
+
+    atualizarSessao();
+
+    botaoSair?.addEventListener("click", async () => {
+        await authClient.signOut();
+        window.location.reload();
+    });
+
+    cadastro?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const form = new FormData(cadastro);
+        const status = document.querySelector("#cadastro-status");
+
+        status.textContent = "Criando conta...";
+
+        const { error } = await authClient.signUp.email({
+            name: form.get("name"),
+            username: form.get("username"),
+            email: form.get("email"),
+            password: form.get("password"),
+        });
+
+        if (error) {
+            status.textContent = error.message;
+        } else {
+            status.textContent = "Login realizado com sucesso.";
+            await atualizarSessao();
+        }
+    });
+
+    login?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const form = new FormData(login);
+        const status = document.querySelector("#login-status");
+
+        status.textContent = "Entrando...";
+
+        const { error } = await authClient.signIn.email({
+            email: form.get("email"),
+            password: form.get("password"),
+        });
+
+        status.textContent = error
+            ? error.message
+            : "Login realizado com sucesso.";
+    });
+</script>
