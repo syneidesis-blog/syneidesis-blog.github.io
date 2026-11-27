@@ -79,6 +79,13 @@ import Base from "../layouts/Base.astro";
         gap: 10px;
         flex-wrap: wrap;
     }
+
+    .botao-excluir {
+        background: #8b2929;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
 </style>
 
 <script>
@@ -148,6 +155,9 @@ import Base from "../layouts/Base.astro";
 
                 card.append(titulo, identificacao, conteudo, data);
 
+                const acoes = document.createElement("div");
+                acoes.className = "acoes-admin";
+
                 if (aprovados) {
                     const formularioResposta = document.createElement("form");
                     const campoResposta = document.createElement("textarea");
@@ -207,33 +217,32 @@ import Base from "../layouts/Base.astro";
 
                     card.append(formularioResposta);
                 } else {
-                    const acoes = document.createElement("div");
-                    acoes.className = "acoes-admin";
-
                     const aprovar = document.createElement("button");
                     aprovar.textContent = "Aprovar";
-
-                    const excluir = document.createElement("button");
-                    excluir.textContent = "Excluir";
 
                     aprovar.addEventListener("click", () => {
                         moderarComentario(comentario.id, "approve");
                     });
 
-                    excluir.addEventListener("click", () => {
-                        if (
-                            confirm(
-                                "Deseja excluir definitivamente este comentário?",
-                            )
-                        ) {
-                            moderarComentario(comentario.id, "reject");
-                        }
-                    });
-
-                    acoes.append(aprovar, excluir);
-                    card.append(acoes);
+                    acoes.append(aprovar);
                 }
 
+                const excluir = document.createElement("button");
+                excluir.textContent = "Excluir";
+                excluir.className = "botao-excluir";
+
+                excluir.addEventListener("click", () => {
+                    const confirmacao = confirm(
+                        "Deseja excluir definitivamente este comentário e todas as suas respostas?",
+                    );
+
+                    if (confirmacao) {
+                        excluirComentario(comentario.id);
+                    }
+                });
+
+                acoes.append(excluir);
+                card.append(acoes);
                 lista.append(card);
             });
         } catch (erro) {
@@ -261,7 +270,31 @@ import Base from "../layouts/Base.astro";
                 throw new Error(dados.error || "Erro ao moderar comentário.");
             }
 
-            await carregarComentarios();
+            await carregarComentarios(mostrandoAprovados);
+        } catch (erro) {
+            status.textContent = erro.message;
+        }
+    }
+
+    async function excluirComentario(id) {
+        try {
+            status.textContent = "Excluindo comentário...";
+
+            const resposta = await fetch(`${API}/admin/comments/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${senhaAdmin}`,
+                },
+            });
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(dados.error || "Erro ao excluir comentário.");
+            }
+
+            status.textContent = dados.message;
+            await carregarComentarios(mostrandoAprovados);
         } catch (erro) {
             status.textContent = erro.message;
         }
