@@ -42,7 +42,38 @@ import Base from "../layouts/Base.astro";
                     required
                 />
                 <p>JPEG, PNG ou WebP. Tamanho máximo: 2 MB.</p>
-                <button type="submit">Enviar foto</button>
+
+                <div id="modal-recorte" hidden>
+                    <h3>Ajustar foto</h3>
+                    <div class="area-recorte">
+                        <img id="imagem-recorte" alt="Prévia para recorte" />
+                    </div>
+
+                    <div class="controles-recorte">
+                        <button
+                            id="zoom-menos"
+                            type="button"
+                            aria-label="Diminuir zoom"
+                        >
+                            −
+                        </button>
+                        <button
+                            id="zoom-mais"
+                            type="button"
+                            aria-label="Aumentar zoom"
+                        >
+                            +
+                        </button>
+                    </div>
+
+                    <button id="cancelar-recorte" type="button">
+                        Cancelar
+                    </button>
+                    <button id="confirmar-recorte" type="submit">
+                        Recortar e enviar
+                    </button>
+                </div>
+
                 <p id="avatar-status" aria-live="polite"></p>
             </form>
 
@@ -130,10 +161,39 @@ import Base from "../layouts/Base.astro";
         height: 72px;
         fill: #49645d;
     }
+
+    #modal-recorte {
+        margin-top: 1.5rem;
+        max-width: 500px;
+    }
+
+    .area-recorte {
+        width: 100%;
+        max-height: 400px;
+        overflow: hidden;
+        background: #263d3a;
+    }
+
+    .area-recorte img {
+        display: block;
+        max-width: 100%;
+    }
+
+    .controles-recorte {
+        display: flex;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    #modal-recorte button {
+        margin-right: 0.4rem;
+    }
 </style>
 
 <script>
     import { authClient } from "../lib/auth";
+    import Cropper from "cropperjs";
+    import "cropperjs/dist/cropper.css";
 
     const API = "https://api.syneidesis.com.br";
 
@@ -149,6 +209,34 @@ import Base from "../layouts/Base.astro";
     const avatarAtual = document.querySelector("#avatar-atual");
     const avatarSemFoto = document.querySelector("#avatar-sem-foto");
     const avatarStatus = document.querySelector("#avatar-status");
+
+    const modalRecorte = document.querySelector("#modal-recorte");
+    const imagemRecorte = document.querySelector("#imagem-recorte");
+    const botaoCancelarRecorte = document.querySelector("#cancelar-recorte");
+    const botaoZoomMais = document.querySelector("#zoom-mais");
+    const botaoZoomMenos = document.querySelector("#zoom-menos");
+
+    let cropper = null;
+    let urlImagem = null;
+
+    function destruirCropper() {
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+
+        if (urlImagem) {
+            URL.revokeObjectURL(urlImagem);
+            urlImagem = null;
+        }
+    }
+
+    function fecharRecorte() {
+        modalRecorte.hidden = true;
+        destruirCropper();
+        imagemRecorte.removeAttribute("src");
+        arquivoAvatar.value = "";
+    }
 
     async function atualizarSessao() {
         const { data } = await authClient.getSession();
@@ -184,38 +272,113 @@ import Base from "../layouts/Base.astro";
         window.location.reload();
     });
 
-    formAvatar?.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
+    arquivoAvatar?.addEventListener("change", () => {
         const arquivo = arquivoAvatar.files?.[0];
 
-        if (!arquivo) {
-            avatarStatus.textContent = "Selecione uma imagem.";
-            return;
-        }
+        if (!arquivo) return;
 
         const formatos = ["image/jpeg", "image/png", "image/webp"];
 
         if (!formatos.includes(arquivo.type)) {
             avatarStatus.textContent = "Escolha uma imagem JPEG, PNG ou WebP.";
+            arquivoAvatar.value = "";
             return;
         }
 
         if (arquivo.size > 2 * 1024 * 1024) {
             avatarStatus.textContent = "A imagem deve ter no máximo 2 MB.";
+            arquivoAvatar.value = "";
             return;
         }
 
-        avatarStatus.textContent = "Enviando foto...";
+        destruirCropper();
+
+        urlImagem = URL.createObjectURL(arquivo);
+        imagemRecorte.src = urlImagem;
+        modalRecorte.hidden = false;
+        avatarStatus.textContent = "Ajuste a imagem e confirme o recorte.";
+
+        imagemRecorte.onload = () => {
+            cropper = new Cropper(imagemRecorte, {
+                aspectRatio: 1,
+                viewMode: 1,
+                dragMode: "move",
+                autoCropArea: 1,
+                responsive: true,
+                background: false,
+                zoomable: true,
+                scalable: false,
+                rotatable: false,
+                guides: true,
+                center: true,
+                cropBoxMovable: false,
+                cropBoxResizable: false,
+            });
+        };
+    });
+
+    botaoZoomMais?.addEventListener("click", () => {
+        cropper?.zoom(0.1);
+    });
+
+    botaoZoomMenos?.addEventListener("click", () => {
+        cropper?.zoom(-0.1);
+    });
+
+    botaoCancelarRecorte?.addEventListener("click", () => {
+        fecharRecorte();
+        avatarStatus.textContent = "Recorte cancelado.";
+    });
+
+    function criarBlob(canvas, qualidade = 0.9) {
+        return new Promise((resolve) => {
+            canvas.toBlob(resolve, "image/jpeg", qualidade);
+        });
+    }
+
+    formAvatar?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (!cropper) {
+            avatarStatus.textContent = "Selecione uma imagem primeiro.";
+            return;
+        }
+
+        avatarStatus.textContent = "Preparando imagem...";
 
         try {
+            const canvas = cropper.getCroppedCanvas({
+                width: 512,
+                height: 512,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: "high",
+            });
+
+            let blob = await criarBlob(canvas, 0.9);
+
+            if (!blob) {
+                throw new Error("Não foi possível recortar a imagem.");
+            }
+
+            if (blob.size > 2 * 1024 * 1024) {
+                blob = await criarBlob(canvas, 0.7);
+            }
+
+            if (!blob || blob.size > 2 * 1024 * 1024) {
+                throw new Error(
+                    "Não foi possível reduzir a imagem para menos de 2 MB.",
+                );
+            }
+
+            avatarStatus.textContent = "Enviando foto...";
+
             const resposta = await fetch(`${API}/avatar`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
-                    "Content-Type": arquivo.type,
+                    "Content-Type": "image/jpeg",
                 },
-                body: arquivo,
+                body: blob,
             });
 
             const resultado = await resposta.json();
@@ -230,8 +393,8 @@ import Base from "../layouts/Base.astro";
             avatarAtual.src = resultado.image;
             avatarAtual.hidden = false;
             avatarSemFoto.hidden = true;
-            arquivoAvatar.value = "";
 
+            fecharRecorte();
             await atualizarSessao();
         } catch (error) {
             avatarStatus.textContent =
