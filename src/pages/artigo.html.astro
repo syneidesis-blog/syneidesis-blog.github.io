@@ -82,6 +82,9 @@ import Base from "../layouts/Base.astro";
                 try {
                     const resposta = await fetch(
                         `${API}/comments?post=${encodeURIComponent(post)}`,
+                        {
+                            credentials: "include",
+                        },
                     );
 
                     if (!resposta.ok) {
@@ -125,7 +128,6 @@ import Base from "../layouts/Base.astro";
                         cabecalho.className = "cabecalho-comentario";
 
                         const avatarContainer = document.createElement("div");
-
                         avatarContainer.className = "avatar-comentario";
 
                         if (comentario.author_image) {
@@ -145,6 +147,7 @@ import Base from "../layouts/Base.astro";
                                     <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8H4z"></path>
                                 </svg>
                             `;
+
                             avatarContainer.setAttribute(
                                 "aria-label",
                                 "Avatar padrão",
@@ -268,11 +271,58 @@ import Base from "../layouts/Base.astro";
                         const acoesComentario = document.createElement("div");
                         acoesComentario.className = "acoes-comentario";
 
-                        acoesComentario.append(
-                            data,
-                            botaoResponder,
-                            areaResposta,
-                        );
+                        acoesComentario.append(data, botaoResponder);
+
+                        // Excluir apenas comentários pertencentes ao usuário.
+                        if (comentario.can_delete) {
+                            const botaoExcluir =
+                                document.createElement("button");
+
+                            botaoExcluir.type = "button";
+                            botaoExcluir.textContent = "Excluir";
+                            botaoExcluir.className = "botao-excluir";
+
+                            botaoExcluir.addEventListener("click", async () => {
+                                const confirmado = window.confirm(
+                                    "Tem certeza de que deseja excluir este comentário?",
+                                );
+
+                                if (!confirmado) return;
+
+                                botaoExcluir.disabled = true;
+                                status.textContent = "Excluindo comentário...";
+
+                                try {
+                                    const resposta = await fetch(
+                                        `${API}/comments/${comentario.id}`,
+                                        {
+                                            method: "DELETE",
+                                            credentials: "include",
+                                        },
+                                    );
+
+                                    const resultado = await resposta.json();
+
+                                    if (!resposta.ok) {
+                                        throw new Error(
+                                            resultado.error ||
+                                                "Não foi possível excluir o comentário.",
+                                        );
+                                    }
+
+                                    status.textContent = "Comentário excluído.";
+
+                                    await carregarComentarios();
+                                } catch (erro) {
+                                    status.textContent = erro.message;
+                                    botaoExcluir.disabled = false;
+                                }
+                            });
+
+                            acoesComentario.append(botaoExcluir);
+                        }
+
+                        acoesComentario.append(areaResposta);
 
                         artigo.append(cabecalho, conteudo, acoesComentario);
 
@@ -476,6 +526,7 @@ import Base from "../layouts/Base.astro";
         :global(.acoes-comentario > button) {
             padding: 4px 0;
             margin-top: 4px;
+            margin-right: 12px;
             color: var(--verde-medio);
             background: transparent;
             border: none;
@@ -492,6 +543,16 @@ import Base from "../layouts/Base.astro";
         :global(.acoes-comentario > button:hover) {
             color: var(--verde-escuro);
             border-color: var(--verde-escuro);
+        }
+
+        :global(.acoes-comentario > .botao-excluir) {
+            color: #a33b3b;
+            border-bottom-color: #d9aaaa;
+        }
+
+        :global(.acoes-comentario > .botao-excluir:hover) {
+            color: #7d2020;
+            border-bottom-color: #7d2020;
         }
 
         :global(.form-resposta button),
