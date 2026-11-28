@@ -32,6 +32,11 @@ import Base from "../layouts/Base.astro";
 
             <p id="usuario-atual"></p>
 
+            <button id="botao-vincular-google" type="button" hidden>
+                Vincular conta Google
+            </button>
+            <p id="google-status" aria-live="polite"></p>
+
             <form id="form-avatar">
                 <label for="avatar-arquivo">Foto de perfil</label>
                 <input
@@ -206,6 +211,10 @@ import Base from "../layouts/Base.astro";
     const sessaoAtiva = document.querySelector("#sessao-ativa");
     const usuarioAtual = document.querySelector("#usuario-atual");
     const botaoSair = document.querySelector("#botao-sair");
+    const botaoVincularGoogle = document.querySelector(
+        "#botao-vincular-google",
+    );
+    const googleStatus = document.querySelector("#google-status");
 
     const formAvatar = document.querySelector("#form-avatar");
     const arquivoAvatar = document.querySelector("#avatar-arquivo");
@@ -245,6 +254,7 @@ import Base from "../layouts/Base.astro";
         const { data } = await authClient.getSession();
 
         if (data?.user) {
+            botaoVincularGoogle.hidden = false;
             sessaoAtiva.hidden = false;
             usuarioAtual.textContent = `Olá, ${data.user.username || data.user.name}!`;
 
@@ -256,6 +266,7 @@ import Base from "../layouts/Base.astro";
                 avatarAtual.hidden = false;
                 avatarSemFoto.hidden = true;
             } else {
+                botaoVincularGoogle.hidden = true;
                 avatarAtual.hidden = true;
                 avatarSemFoto.hidden = false;
             }
@@ -273,6 +284,19 @@ import Base from "../layouts/Base.astro";
     botaoSair?.addEventListener("click", async () => {
         await authClient.signOut();
         window.location.reload();
+    });
+    botaoVincularGoogle?.addEventListener("click", async () => {
+        googleStatus.textContent = "Conectando ao Google...";
+
+        const { error } = await authClient.linkSocial({
+            provider: "google",
+            callbackURL: window.location.href,
+        });
+
+        if (error) {
+            googleStatus.textContent =
+                error.message || "Não foi possível vincular a conta Google.";
+        }
     });
 
     arquivoAvatar?.addEventListener("change", () => {
