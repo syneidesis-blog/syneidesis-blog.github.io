@@ -86,7 +86,30 @@ import Base from "../layouts/Base.astro";
             <h2>Entre na sua conta</h2>
 
             <button id="botao-google" type="button">
-                Continuar com Google
+                <svg
+                    viewBox="0 0 48 48"
+                    width="22"
+                    height="22"
+                    aria-hidden="true"
+                >
+                    <path
+                        fill="#4285F4"
+                        d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.6c3.9-3.6 6.1-8.8 6.1-15z"
+                    />
+                    <path
+                        fill="#34A853"
+                        d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.6-5.1c-1.8 1.2-4.1 2-6.9 2-5.3 0-9.8-3.6-11.4-8.4H5.8v5.3A20 20 0 0 0 24 44z"
+                    />
+                    <path
+                        fill="#FBBC05"
+                        d="M12.6 27.6a12 12 0 0 1 0-7.2v-5.3H5.8a20 20 0 0 0 0 17.8z"
+                    />
+                    <path
+                        fill="#EA4335"
+                        d="M24 12.1c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6 29.5 4 24 4A20 20 0 0 0 5.8 15.1l6.8 5.3c1.6-4.7 6.1-8.3 11.4-8.3z"
+                    />
+                </svg>
+                <span>Continuar com Google</span>
             </button>
 
             <p id="google-status" aria-live="polite"></p>
@@ -95,15 +118,51 @@ import Base from "../layouts/Base.astro";
 </Base>
 
 <style>
+    main {
+        width: min(100% - 2rem, 680px);
+        margin: 4rem auto;
+        color: #263d3a;
+    }
+
+    main > h1 {
+        margin-bottom: 2rem;
+        font-size: clamp(2rem, 5vw, 2.8rem);
+        font-weight: 600;
+        letter-spacing: -0.04em;
+    }
+
+    #sessao-ativa,
+    #autenticacao {
+        padding: clamp(1.5rem, 5vw, 2.5rem);
+        border: 1px solid #c4d2d0;
+        border-radius: 12px;
+        background: #eef0e9;
+    }
+
+    #sessao-ativa h2,
+    #autenticacao h2 {
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        font-size: 1.4rem;
+        font-weight: 500;
+    }
+
+    #usuario-atual {
+        margin: 1rem 0 2rem;
+        color: #49645d;
+        font-size: 1.05rem;
+    }
+
     .perfil-avatar {
         width: 120px;
         height: 120px;
-        border-radius: 50%;
+        margin: 1.5rem 0;
         overflow: hidden;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 1rem 0;
+        border: 2px solid #c4d2d0;
+        border-radius: 50%;
         background: #c4d2d0;
     }
 
@@ -127,15 +186,125 @@ import Base from "../layouts/Base.astro";
         fill: #49645d;
     }
 
+    #avatar-sem-foto[hidden] {
+        display: none;
+    }
+
+    #form-avatar {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 1.5rem 0;
+        border-top: 1px solid #c4d2d0;
+    }
+
+    #form-avatar label {
+        font-weight: 600;
+    }
+
+    #form-avatar input[type="file"] {
+        max-width: 100%;
+        padding: 0.7rem;
+        border: 1px solid #c4d2d0;
+        border-radius: 6px;
+        background: #fff;
+        color: #263d3a;
+        font: inherit;
+    }
+
+    #form-avatar > p {
+        margin: 0;
+        color: #49645d;
+        font-size: 0.85rem;
+    }
+
+    button {
+        min-height: 44px;
+        padding: 0.75rem 1.25rem;
+        border: 1px solid #49645d;
+        border-radius: 6px;
+        background: #49645d;
+        color: #fff;
+        font: inherit;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 180ms ease;
+    }
+
+    button:hover {
+        background: #263d3a;
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+        outline: 3px solid #a9c5c0;
+        outline-offset: 3px;
+    }
+
+    button:disabled {
+        cursor: wait;
+        opacity: 0.6;
+    }
+
+    #botao-google {
+        display: flex;
+        width: 100%;
+        min-height: 52px;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        background: #db4437;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    #botao-google:hover {
+        background: #c1352b;
+    }
+
+    #botao-google svg {
+        flex-shrink: 0;
+    }
+
+    #google-status,
+    #avatar-status {
+        min-height: 1.4em;
+        margin-top: 1rem;
+        color: #49645d;
+        font-size: 0.9rem;
+    }
+
+    #botao-sair {
+        border-color: #c4d2d0;
+        background: transparent;
+        color: #49645d;
+    }
+
+    #botao-sair:hover {
+        background: #c4d2d0;
+    }
+
     #modal-recorte {
+        width: 100%;
         margin-top: 1.5rem;
-        max-width: 500px;
+        padding-top: 1.5rem;
+        border-top: 1px solid #c4d2d0;
+    }
+
+    #modal-recorte h3 {
+        font-weight: 500;
     }
 
     .area-recorte {
         width: 100%;
         max-height: 400px;
         overflow: hidden;
+        border-radius: 6px;
         background: #263d3a;
     }
 
@@ -150,12 +319,35 @@ import Base from "../layouts/Base.astro";
         margin: 1rem 0;
     }
 
+    .controles-recorte button {
+        width: 44px;
+        padding: 0;
+        font-size: 1.3rem;
+    }
+
     #modal-recorte button {
         margin-right: 0.4rem;
     }
 
-    #avatar-sem-foto[hidden] {
-        display: none;
+    #modal-recorte #cancelar-recorte {
+        border-color: #c4d2d0;
+        background: transparent;
+        color: #49645d;
+    }
+
+    #modal-recorte #cancelar-recorte:hover {
+        background: #c4d2d0;
+    }
+
+    @media (max-width: 480px) {
+        main {
+            margin: 2rem auto;
+        }
+
+        #sessao-ativa,
+        #autenticacao {
+            padding: 1.5rem;
+        }
     }
 </style>
 
