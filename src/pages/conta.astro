@@ -32,11 +32,6 @@ import Base from "../layouts/Base.astro";
 
             <p id="usuario-atual"></p>
 
-            <button id="botao-vincular-google" type="button" hidden>
-                Vincular conta Google
-            </button>
-            <p id="google-status" aria-live="polite"></p>
-
             <form id="form-avatar">
                 <label for="avatar-arquivo">Foto de perfil</label>
                 <input
@@ -87,50 +82,15 @@ import Base from "../layouts/Base.astro";
             </button>
         </section>
 
-        <form id="form-cadastro" class="form-autenticacao">
-            <h2>Criar conta</h2>
+        <section id="autenticacao">
+            <h2>Entre na sua conta</h2>
 
-            <label for="cadastro-nome">Nome de exibição</label>
-            <input id="cadastro-nome" name="name" type="text" required />
+            <button id="botao-google" type="button">
+                Continuar com Google
+            </button>
 
-            <label for="cadastro-usuario">Nome de usuário</label>
-            <input
-                id="cadastro-usuario"
-                name="username"
-                type="text"
-                minlength="3"
-                maxlength="30"
-                required
-            />
-
-            <label for="cadastro-email">E-mail</label>
-            <input id="cadastro-email" name="email" type="email" required />
-
-            <label for="cadastro-senha">Senha</label>
-            <input
-                id="cadastro-senha"
-                name="password"
-                type="password"
-                minlength="8"
-                required
-            />
-
-            <button type="submit">Cadastrar</button>
-            <p id="cadastro-status" class="auth-status" aria-live="polite"></p>
-        </form>
-
-        <form id="form-login" class="form-autenticacao">
-            <h2>Entrar</h2>
-
-            <label for="login-email">E-mail</label>
-            <input id="login-email" name="email" type="email" required />
-
-            <label for="login-senha">Senha</label>
-            <input id="login-senha" name="password" type="password" required />
-
-            <button type="submit">Entrar</button>
-            <p id="login-status" class="auth-status" aria-live="polite"></p>
-        </form>
+            <p id="google-status" aria-live="polite"></p>
+        </section>
     </main>
 </Base>
 
@@ -193,6 +153,7 @@ import Base from "../layouts/Base.astro";
     #modal-recorte button {
         margin-right: 0.4rem;
     }
+
     #avatar-sem-foto[hidden] {
         display: none;
     }
@@ -205,16 +166,13 @@ import Base from "../layouts/Base.astro";
 
     const API = "https://api.syneidesis.com.br";
 
-    const cadastro = document.querySelector("#form-cadastro");
-    const login = document.querySelector("#form-login");
+    const autenticacao = document.querySelector("#autenticacao");
+    const botaoGoogle = document.querySelector("#botao-google");
+    const googleStatus = document.querySelector("#google-status");
 
     const sessaoAtiva = document.querySelector("#sessao-ativa");
     const usuarioAtual = document.querySelector("#usuario-atual");
     const botaoSair = document.querySelector("#botao-sair");
-    const botaoVincularGoogle = document.querySelector(
-        "#botao-vincular-google",
-    );
-    const googleStatus = document.querySelector("#google-status");
 
     const formAvatar = document.querySelector("#form-avatar");
     const arquivoAvatar = document.querySelector("#avatar-arquivo");
@@ -254,26 +212,22 @@ import Base from "../layouts/Base.astro";
         const { data } = await authClient.getSession();
 
         if (data?.user) {
-            botaoVincularGoogle.hidden = false;
             sessaoAtiva.hidden = false;
-            usuarioAtual.textContent = `Olá, ${data.user.username || data.user.name}!`;
+            autenticacao.hidden = true;
 
-            cadastro.hidden = true;
-            login.hidden = true;
+            usuarioAtual.textContent = `Olá, ${data.user.username || data.user.name}!`;
 
             if (data.user.image) {
                 avatarAtual.src = data.user.image;
                 avatarAtual.hidden = false;
                 avatarSemFoto.hidden = true;
             } else {
-                botaoVincularGoogle.hidden = true;
                 avatarAtual.hidden = true;
                 avatarSemFoto.hidden = false;
             }
         } else {
             sessaoAtiva.hidden = true;
-            cadastro.hidden = false;
-            login.hidden = false;
+            autenticacao.hidden = false;
         }
 
         return data?.user || null;
@@ -281,22 +235,26 @@ import Base from "../layouts/Base.astro";
 
     atualizarSessao();
 
-    botaoSair?.addEventListener("click", async () => {
-        await authClient.signOut();
-        window.location.reload();
-    });
-    botaoVincularGoogle?.addEventListener("click", async () => {
+    botaoGoogle?.addEventListener("click", async () => {
         googleStatus.textContent = "Conectando ao Google...";
+        botaoGoogle.disabled = true;
 
-        const { error } = await authClient.linkSocial({
+        const { error } = await authClient.signIn.social({
             provider: "google",
             callbackURL: window.location.href,
         });
 
         if (error) {
             googleStatus.textContent =
-                error.message || "Não foi possível vincular a conta Google.";
+                error.message || "Não foi possível entrar com o Google.";
+
+            botaoGoogle.disabled = false;
         }
+    });
+
+    botaoSair?.addEventListener("click", async () => {
+        await authClient.signOut();
+        window.location.reload();
     });
 
     arquivoAvatar?.addEventListener("change", () => {
@@ -417,6 +375,7 @@ import Base from "../layouts/Base.astro";
             }
 
             avatarStatus.textContent = "Foto atualizada com sucesso!";
+
             avatarAtual.src = resultado.image;
             avatarAtual.hidden = false;
             avatarSemFoto.hidden = true;
@@ -426,50 +385,6 @@ import Base from "../layouts/Base.astro";
         } catch (error) {
             avatarStatus.textContent =
                 error.message || "Erro ao enviar a foto.";
-        }
-    });
-
-    cadastro?.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        const form = new FormData(cadastro);
-        const status = document.querySelector("#cadastro-status");
-
-        status.textContent = "Criando conta...";
-
-        const { error } = await authClient.signUp.email({
-            name: form.get("name"),
-            username: form.get("username"),
-            email: form.get("email"),
-            password: form.get("password"),
-        });
-
-        if (error) {
-            status.textContent = error.message;
-        } else {
-            status.textContent = "Login realizado com sucesso.";
-            await atualizarSessao();
-        }
-    });
-
-    login?.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        const form = new FormData(login);
-        const status = document.querySelector("#login-status");
-
-        status.textContent = "Entrando...";
-
-        const { error } = await authClient.signIn.email({
-            email: form.get("email"),
-            password: form.get("password"),
-        });
-
-        if (error) {
-            status.textContent = error.message;
-        } else {
-            status.textContent = "Login realizado com sucesso.";
-            await atualizarSessao();
         }
     });
 </script>
